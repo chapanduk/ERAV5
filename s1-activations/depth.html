@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>S1-2 · Depth without nonlinearity is a lie</title>
+<style>
+  :root { --bg:#0f1116; --fg:#e8eaed; --muted:#9aa0a6; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+    font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; padding:28px 20px 60px; }
+  h1 { font-size:20px; margin:0 0 4px; font-weight:650; }
+  .lede { color:var(--muted); max-width:960px; margin:0 0 18px; }
+
+  .controls { margin:6px 0 18px; display:flex; gap:18px; align-items:center; flex-wrap:wrap; }
+  button { background:#2b6cb0; color:#fff; border:0; border-radius:8px; padding:9px 16px; font-size:14px; font-weight:600; cursor:pointer; }
+  button:disabled { opacity:.5; cursor:default; }
+  label.ctl { color:var(--muted); font-size:13px; display:flex; gap:7px; align-items:center; }
+  label.ctl .v2 { color:var(--fg); font-variant-numeric:tabular-nums; min-width:38px; }
+  input[type=range] { accent-color:#2b6cb0; }
+  #epoch { color:var(--muted); font-variant-numeric:tabular-nums; font-weight:700; }
+
+  .panels { display:flex; gap:18px; flex-wrap:wrap; }
+  .panel { flex:1 1 300px; min-width:280px; background:#171a21; border:1px solid #262b36; border-radius:12px; padding:14px; }
+  .panel h2 { font-size:14.5px; margin:0 0 2px; font-weight:600; }
+  .panel .arch { color:var(--muted); font-size:12px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+  .panel .sub { font-size:13px; margin:6px 0 10px; min-height:18px; }
+  canvas { width:100%; height:auto; display:block; border-radius:8px; background:#0b0d11; }
+  .acc { font-variant-numeric:tabular-nums; font-weight:700; }
+  .line { color:#f2a15d; } .ring { color:#5fd68a; }
+
+  .proof { margin-top:22px; background:#141821; border:1px solid #262b36; border-radius:12px; padding:18px; }
+  .proof h3 { margin:0 0 4px; font-size:15px; }
+  .proof p { color:var(--muted); margin:0 0 14px; max-width:960px; }
+  .matrow { display:flex; align-items:center; gap:12px; flex-wrap:wrap; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+  .mat { display:inline-block; }
+  .mat .cap { color:var(--muted); font-size:11px; text-align:center; margin-bottom:3px; }
+  .grid { display:grid; gap:2px 8px; background:#0b0d11; border:1px solid #2a3040; border-radius:6px;
+          padding:6px 8px; font-size:11.5px; font-variant-numeric:tabular-nums; }
+  .grid span { text-align:right; color:#cdd3da; }
+  .op { font-size:20px; color:var(--muted); }
+  .eq { font-size:20px; color:#5fd68a; font-weight:700; }
+  .effbox .grid { border-color:#3a6b4f; }
+  .verify { margin-top:14px; font-size:13.5px; }
+  .verify code { background:#20242e; padding:2px 6px; border-radius:5px; }
+  .ok { color:#5fd68a; font-weight:700; }
+  .legend { display:flex; gap:16px; font-size:12.5px; color:var(--muted); margin-top:10px; flex-wrap:wrap; }
+  .dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px; vertical-align:middle; border:1px solid rgba(255,255,255,.4); }
+</style>
+</head>
+<body>
+  <h1>Depth without nonlinearity is a lie</h1>
+  <p class="lede">
+    Five stacked <b>linear</b> layers collapse into a single linear map, so a 5-layer linear net is no
+    stronger than 1 layer &mdash; both draw a straight line and fail the ring identically. Insert a ReLU
+    between the <b>same</b> five layers and it suddenly solves it. The proof at the bottom multiplies the five
+    weight matrices numerically and shows the product is <b>one matrix</b>.
+  </p>
+
+  <div class="controls">
+    <button id="run">Retrain</button>
+    <label class="ctl">epochs
+      <input id="epochs" type="range" min="500" max="8000" value="4000" step="500" />
+      <span class="v2" id="epochsVal">4000</span>
+    </label>
+    <label class="ctl">noise
+      <input id="noise" type="range" min="0" max="35" value="18" />
+      <span class="v2" id="noiseVal">0.18</span>
+    </label>
+    <span id="epoch"></span>
+  </div>
+
+  <div class="panels">
+    <div class="panel">
+      <h2>(a) 1 linear layer</h2>
+      <div class="arch">2 &rarr; 1</div>
+      <p class="sub" id="subA">&nbsp;</p>
+      <canvas id="cvA" width="360" height="360"></canvas>
+    </div>
+    <div class="panel">
+      <h2>(b) 5 linear layers &mdash; no activation</h2>
+      <div class="arch">2 &rarr; 4 &rarr; 4 &rarr; 4 &rarr; 4 &rarr; 1</div>
+      <p class="sub" id="subB">&nbsp;</p>
+      <canvas id="cvB" width="360" height="360"></canvas>
+    </div>
+    <div class="panel">
+      <h2>(c) same 5 layers + ReLU</h2>
+      <div class="arch">2 &rarr; 4 &rarr; 4 &rarr; 4 &rarr; 4 &rarr; 1, ReLU between</div>
+      <p class="sub" id="subC">&nbsp;</p>
+      <canvas id="cvC" width="360" height="360"></canvas>
+    </div>
+  </div>
+  <div class="legend">
+    <span><span class="dot" style="background:#4a90d9"></span>class 0 (inner)</span>
+    <span><span class="dot" style="background:#d9534f"></span>class 1 (outer)</span>
+    <span>shaded = predicted probability · black line = 0.5 boundary · dashed = true ring radii</span>
+  </div>
+
+  <div class="proof">
+    <h3>Bonus proof — the five weight matrices multiply into one</h3>
+    <p>
+      Panel (b) with no activation computes <code>z = x · W&#8321; · W&#8322; · W&#8323; · W&#8324; · W&#8325; + b<sub>eff</sub></code>.
+      Matrix multiplication is associative, so that whole chain is a single 2&times;1 matrix. Below are the
+      five trained matrices from panel (b), their product <b>W<sub>eff</sub></b>, and a check that feeding all
+      300 points through the single collapsed map reproduces the 5-layer network exactly.
+    </p>
+    <div class="matrow" id="matrow"></div>
+    <div class="verify" id="verify"></div>
+  </div>
+
+<script>
+// --------------------------------------------------------------------------- //
+// RNG + gaussian                                                               //
+// --------------------------------------------------------------------------- //
+function rng(seed){let s=seed>>>0;return function(){s|=0;s=(s+0x6D2B79F5)|0;let t=Math.imul(s^(s>>>15),1|s);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296;};}
+function gauss(rand){let u=0,v=0;while(u===0)u=rand();while(v===0)v=rand();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+
+// --------------------------------------------------------------------------- //
+// Ring data                                                                    //
+// --------------------------------------------------------------------------- //
+const R_INNER=1.0, R_OUTER=2.6;
+function makeRings(nPer,noise,seed){
+  const rand=rng(seed),X=[],y=[];
+  for(const [radius,label] of [[R_INNER,0],[R_OUTER,1]]){
+    for(let i=0;i<nPer;i++){const theta=rand()*2*Math.PI;const r=radius+gauss(rand)*noise;
+      X.push([r*Math.cos(theta),r*Math.sin(theta)]);y.push(label);}
+  }
+  for(let i=X.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[X[i],X[j]]=[X[j],X[i]];[y[i],y[j]]=[y[j],y[i]];}
+  return {X,y};
+}
+const sigmoid=z=>1/(1+Math.exp(-z));
+
+// --------------------------------------------------------------------------- //
+// MLP (arbitrary depth, activation 'relu' or 'none')                          //
+// --------------------------------------------------------------------------- //
+class MLP{
+  constructor(hiddenSizes,seed,act){
+    this.act=act||"relu";
+    this.sizes=[2,...hiddenSizes,1];
+    const rand=rng(seed);this.W=[];this.b=[];
+    for(let l=0;l<this.sizes.length-1;l++){
+      const fin=this.sizes[l],fout=this.sizes[l+1],std=Math.sqrt(2/fin);
+      this.W.push(Array.from({length:fin},()=>Array.from({length:fout},()=>gauss(rand)*std)));
+      this.b.push(new Array(fout).fill(0));
+    }
+    this.L=this.W.length;
+  }
+  actFn(z){return this.act==="relu"?(z>0?z:0):z;}
+  actDer(z){return this.act==="relu"?(z>0?1:0):1;}
+  forward(x,cache){
+    const as=[x],zs=[];let a=x;
+    for(let l=0;l<this.L;l++){
+      const fout=this.sizes[l+1],z=new Array(fout);
+      for(let j=0;j<fout;j++){let s=this.b[l][j];for(let i=0;i<a.length;i++)s+=a[i]*this.W[l][i][j];z[j]=s;}
+      zs.push(z);
+      const out=(l<this.L-1)?z.map(v=>this.actFn(v)):z.map(sigmoid);
+      as.push(out);a=out;
+    }
+    const p=as[as.length-1][0];
+    return cache?{p,zs,as}:p;
+  }
+  step(X,y,lr){
+    const n=X.length;
+    const gW=this.W.map(Wl=>Wl.map(r=>r.map(()=>0))),gb=this.b.map(bl=>bl.map(()=>0));
+    for(let s=0;s<n;s++){
+      const {p,zs,as}=this.forward(X[s],true);
+      let delta=[(p-y[s])/n];
+      for(let l=this.L-1;l>=0;l--){
+        const ain=as[l];
+        for(let j=0;j<delta.length;j++){gb[l][j]+=delta[j];for(let i=0;i<ain.length;i++)gW[l][i][j]+=ain[i]*delta[j];}
+        if(l>0){const prevZ=zs[l-1],nd=new Array(ain.length);
+          for(let i=0;i<ain.length;i++){let sum=0;for(let j=0;j<delta.length;j++)sum+=this.W[l][i][j]*delta[j];nd[i]=sum*this.actDer(prevZ[i]);}
+          delta=nd;}
+      }
+    }
+    for(let l=0;l<this.L;l++){
+      for(let i=0;i<this.W[l].length;i++)for(let j=0;j<this.W[l][i].length;j++)this.W[l][i][j]-=lr*gW[l][i][j];
+      for(let j=0;j<this.b[l].length;j++)this.b[l][j]-=lr*gb[l][j];
+    }
+  }
+  accuracy(X,y){let ok=0;for(let i=0;i<X.length;i++)ok+=((this.forward(X[i],false)>0.5?1:0)===y[i]);return ok/X.length;}
+}
+
+// --------------------------------------------------------------------------- //
+// Matrix fold: W1·W2·…·Wn and effective bias                                  //
+// --------------------------------------------------------------------------- //
+function matmul(A,B){
+  const m=A.length,k=A[0].length,n=B[0].length,C=Array.from({length:m},()=>new Array(n).fill(0));
+  for(let i=0;i<m;i++)for(let j=0;j<n;j++){let s=0;for(let t=0;t<k;t++)s+=A[i][t]*B[t][j];C[i][j]=s;}
+  return C;
+}
+function fold(net){
+  let Weff=net.W[0];
+  for(let l=1;l<net.W.length;l++)Weff=matmul(Weff,net.W[l]);
+  let beff=null;
+  for(let l=0;l<net.b.length;l++){
+    let v=[net.b[l].slice()];
+    for(let m=l+1;m<net.W.length;m++)v=matmul(v,net.W[m]);
+    beff=beff?beff.map((row,i)=>row.map((x,j)=>x+v[i][j])):v;
+  }
+  return {Weff,beff:beff[0][0]};
+}
+
+// --------------------------------------------------------------------------- //
+// Rendering                                                                   //
+// --------------------------------------------------------------------------- //
+const VIEW=3.6,GRID=80;
+function toPx(v,size){return (v+VIEW)/(2*VIEW)*size;}
+function probColor(p){
+  const c0=[74,144,217],c1=[217,83,79],cw=[235,235,235];let r,g,b;
+  if(p<0.5){const t=p/0.5;r=c0[0]+(cw[0]-c0[0])*t;g=c0[1]+(cw[1]-c0[1])*t;b=c0[2]+(cw[2]-c0[2])*t;}
+  else{const t=(p-0.5)/0.5;r=cw[0]+(c1[0]-cw[0])*t;g=cw[1]+(c1[1]-cw[1])*t;b=cw[2]+(c1[2]-cw[2])*t;}
+  return [r|0,g|0,b|0];
+}
+function draw(canvas,model,X,y){
+  const ctx=canvas.getContext("2d"),S=canvas.width;
+  const off=document.createElement("canvas");off.width=GRID;off.height=GRID;
+  const octx=off.getContext("2d"),img=octx.createImageData(GRID,GRID),field=[];
+  for(let j=0;j<GRID;j++){field[j]=[];for(let i=0;i<GRID;i++){
+    const x0=-VIEW+(i/(GRID-1))*2*VIEW,x1=VIEW-(j/(GRID-1))*2*VIEW,p=model.forward([x0,x1],false);
+    field[j][i]=p;const [r,g,b]=probColor(p),k=(j*GRID+i)*4;
+    img.data[k]=r;img.data[k+1]=g;img.data[k+2]=b;img.data[k+3]=170;}}
+  octx.putImageData(img,0,0);ctx.clearRect(0,0,S,S);ctx.imageSmoothingEnabled=true;ctx.drawImage(off,0,0,S,S);
+  ctx.setLineDash([5,5]);ctx.lineWidth=1.2;
+  for(const [rad,col] of [[R_INNER,"rgba(120,180,255,.8)"],[R_OUTER,"rgba(255,140,135,.8)"]]){
+    ctx.beginPath();ctx.strokeStyle=col;ctx.arc(toPx(0,S),S-toPx(0,S),rad/(2*VIEW)*S,0,2*Math.PI);ctx.stroke();}
+  ctx.setLineDash([]);
+  ctx.strokeStyle="#0b0d11";ctx.lineWidth=2.5;ctx.beginPath();
+  const cell=S/(GRID-1),T=0.5,lerp=(a,b)=>(T-a)/(b-a);
+  for(let j=0;j<GRID-1;j++)for(let i=0;i<GRID-1;i++){
+    const tl=field[j][i],tr=field[j][i+1],bl=field[j+1][i],br=field[j+1][i+1],pts=[];
+    if((tl>T)!==(tr>T))pts.push([(i+lerp(tl,tr))*cell,j*cell]);
+    if((tr>T)!==(br>T))pts.push([(i+1)*cell,(j+lerp(tr,br))*cell]);
+    if((bl>T)!==(br>T))pts.push([(i+lerp(bl,br))*cell,(j+1)*cell]);
+    if((tl>T)!==(bl>T))pts.push([i*cell,(j+lerp(tl,bl))*cell]);
+    if(pts.length===2){ctx.moveTo(pts[0][0],pts[0][1]);ctx.lineTo(pts[1][0],pts[1][1]);}
+  }
+  ctx.stroke();
+  for(let idx=0;idx<X.length;idx++){
+    const px=toPx(X[idx][0],S),py=S-toPx(X[idx][1],S);
+    ctx.beginPath();ctx.arc(px,py,3,0,2*Math.PI);
+    ctx.fillStyle=y[idx]===0?"#4a90d9":"#d9534f";ctx.fill();
+    ctx.lineWidth=0.6;ctx.strokeStyle="rgba(255,255,255,.6)";ctx.stroke();
+  }
+}
+
+// render a matrix as a compact grid
+function matHTML(mat,cap,decimals){
+  const rows=mat.length,cols=mat[0].length,d=decimals==null?2:decimals;
+  let cells="";
+  for(let i=0;i<rows;i++)for(let j=0;j<cols;j++)cells+=`<span>${mat[i][j].toFixed(d)}</span>`;
+  return `<div class="mat"><div class="cap">${cap} · ${rows}&times;${cols}</div>`+
+         `<div class="grid" style="grid-template-columns:repeat(${cols},1fr)">${cells}</div></div>`;
+}
+
+// --------------------------------------------------------------------------- //
+// Drive                                                                       //
+// --------------------------------------------------------------------------- //
+const $=id=>document.getElementById(id);
+const cvA=$("cvA"),cvB=$("cvB"),cvC=$("cvC");
+const runBtn=$("run"),epochsEl=$("epochs"),noiseEl=$("noise");
+const HIDDEN=[4,4,4,4];   // 5 weight layers: 2-4-4-4-4-1
+let anim=null,seed=1;
+
+function run(){
+  if(anim)cancelAnimationFrame(anim);
+  const noise=(+noiseEl.value)/100, EPOCHS=+epochsEl.value;
+  $("noiseVal").textContent=noise.toFixed(2);
+  $("epochsVal").textContent=EPOCHS;
+  seed++;
+  const {X,y}=makeRings(150,noise,seed);
+
+  const one=new MLP([],seed,"none");            // 1 linear layer
+  const five=new MLP(HIDDEN,seed,"none");       // 5 linear layers, no activation
+  const relu=new MLP(HIDDEN,seed,"relu");       // same 5 layers + ReLU
+
+  const PER_FRAME=Math.max(12,Math.round(EPOCHS/70));
+  let e=0;runBtn.disabled=true;
+
+  function frame(){
+    for(let k=0;k<PER_FRAME&&e<EPOCHS;k++,e++){
+      one.step(X,y,0.5);
+      five.step(X,y,0.08);   // small lr: deep linear nets are numerically touchy
+      relu.step(X,y,0.15);
+    }
+    draw(cvA,one,X,y);draw(cvB,five,X,y);draw(cvC,relu,X,y);
+    const aA=one.accuracy(X,y),aB=five.accuracy(X,y),aC=relu.accuracy(X,y);
+    $("subA").innerHTML=`straight line &mdash; <span class="acc line">${(aA*100).toFixed(0)}%</span>`;
+    $("subB").innerHTML=`same straight line &mdash; <span class="acc line">${(aB*100).toFixed(0)}%</span>`;
+    $("subC").innerHTML=`wraps the ring &mdash; <span class="acc ring">${(aC*100).toFixed(0)}%</span>`;
+    $("epoch").textContent=`epoch ${e} / ${EPOCHS}`;
+    if(e<EPOCHS){anim=requestAnimationFrame(frame);}
+    else{runBtn.disabled=false;$("epoch").textContent=`done · ${EPOCHS} epochs`;renderProof(five,X);}
+  }
+  frame();
+}
+
+function renderProof(net,X){
+  const {Weff,beff}=fold(net);
+  const subs=["₁","₂","₃","₄","₅"];
+  let html="";
+  for(let l=0;l<net.W.length;l++){
+    html+=matHTML(net.W[l],"W"+subs[l],2);
+    html+=(l<net.W.length-1)?`<span class="op">&times;</span>`:`<span class="eq">=</span>`;
+  }
+  html+=`<div class="mat effbox">${matHTML(Weff,"W_eff",4)}</div>`;
+  $("matrow").innerHTML=html;
+
+  // verify collapse reproduces the net exactly
+  let maxDiff=0;
+  for(const x of X){
+    const zc=x[0]*Weff[0][0]+x[1]*Weff[1][0]+beff;
+    maxDiff=Math.max(maxDiff,Math.abs(net.forward(x,false)-sigmoid(zc)));
+  }
+  $("verify").innerHTML=
+    `Five matrices &mdash; shapes <code>2&times;4 &middot; 4&times;4 &middot; 4&times;4 &middot; 4&times;4 &middot; 4&times;1</code> &mdash; `+
+    `collapse to one <code>2&times;1</code> matrix <b>W_eff</b> with bias <code>b_eff = ${beff.toFixed(4)}</code>.<br>`+
+    `Feeding all 300 points through the single map <code>sigmoid(x&middot;W_eff + b_eff)</code> matches the 5-layer `+
+    `network to <span class="ok">max error ${maxDiff.toExponential(1)}</span> (machine precision) &mdash; `+
+    `they are literally the <b>same function</b>. Depth bought nothing.`;
+}
+
+runBtn.addEventListener("click",run);
+epochsEl.addEventListener("input",()=>$("epochsVal").textContent=epochsEl.value);
+noiseEl.addEventListener("input",()=>$("noiseVal").textContent=((+noiseEl.value)/100).toFixed(2));
+run();
+</script>
+</body>
+</html>

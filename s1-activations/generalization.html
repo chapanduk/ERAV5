@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>S1-4 · Memorization vs generalization — data closes the gap</title>
+<style>
+  :root { --bg:#0f1116; --fg:#e8eaed; --muted:#9aa0a6; --train:#5fd68a; --test:#e0665f; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+    font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; padding:28px 20px 60px; }
+  h1 { font-size:20px; margin:0 0 4px; font-weight:650; }
+  .lede { color:var(--muted); max-width:980px; margin:0 0 18px; }
+  .lede b.hl { color:var(--fg); }
+
+  .controls { margin:6px 0 18px; display:flex; gap:18px; align-items:center; flex-wrap:wrap; }
+  button { background:#2b6cb0; color:#fff; border:0; border-radius:8px; padding:9px 16px; font-size:14px; font-weight:600; cursor:pointer; }
+  button:disabled { opacity:.5; cursor:default; }
+  label.ctl { color:var(--muted); font-size:13px; display:flex; gap:7px; align-items:center; }
+  label.ctl .v2 { color:var(--fg); font-variant-numeric:tabular-nums; min-width:44px; }
+  input[type=range] { accent-color:#2b6cb0; }
+  #epoch { color:var(--muted); font-variant-numeric:tabular-nums; font-weight:700; }
+
+  .panels { display:flex; gap:16px; flex-wrap:wrap; }
+  .panel { flex:1 1 280px; min-width:260px; background:#171a21; border:1px solid #262b36; border-radius:12px; padding:14px; }
+  .panel h2 { font-size:14px; margin:0 0 2px; font-weight:600; }
+  .panel h2 .n { color:#6aa9e0; }
+  .panel .tag { font-size:12px; color:var(--muted); min-height:16px; margin-bottom:8px; }
+  canvas.bd { width:100%; height:auto; display:block; border-radius:8px; background:#0b0d11; }
+  .stat { display:flex; justify-content:space-between; font-size:12.5px; margin-top:8px; font-variant-numeric:tabular-nums; }
+  .stat .k { color:var(--muted); }
+  .gapline { font-weight:700; }
+
+  .bottom { display:flex; gap:16px; flex-wrap:wrap; margin-top:18px; }
+  .chartcard { flex:2 1 460px; min-width:360px; background:#171a21; border:1px solid #262b36; border-radius:12px; padding:16px; }
+  .notecard { flex:1 1 280px; min-width:260px; background:#171a21; border:1px solid #262b36; border-radius:12px; padding:16px; color:var(--muted); font-size:13.5px; }
+  .notecard h2, .chartcard h2 { font-size:14.5px; margin:0 0 10px; font-weight:600; color:var(--fg); }
+  .notecard b { color:var(--fg); }
+  canvas.chart { width:100%; height:auto; display:block; }
+
+  .legend { display:flex; gap:16px; font-size:12px; color:var(--muted); margin-top:10px; flex-wrap:wrap; }
+  .dot { display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:5px; vertical-align:middle; }
+  .ring { display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:5px; vertical-align:middle; border:2px solid #fff; }
+</style>
+</head>
+<body>
+  <h1>Memorization vs generalization — and data closes the gap</h1>
+  <p class="lede">
+    The <b class="hl">same over-parameterized network</b> is trained on the same noisy task at three dataset
+    sizes. On tiny data it <b class="hl">memorizes</b> — train loss crashes to ~0 while held-out loss stays
+    high (a huge gap). As the dataset grows it can no longer memorize, so it learns the <b class="hl">true</b>
+    boundary instead, and train/test converge. More data is what closes the gap. <b class="hl">Data is everything.</b>
+  </p>
+
+  <div class="controls">
+    <button id="run">Retrain</button>
+    <label class="ctl">units / layer
+      <input id="units" type="range" min="4" max="48" value="32" step="2" />
+      <span class="v2" id="unitsVal">32</span>
+    </label>
+    <label class="ctl">label noise
+      <input id="noise" type="range" min="0" max="30" value="10" step="1" />
+      <span class="v2" id="noiseVal">10%</span>
+    </label>
+    <span id="epoch"></span>
+  </div>
+
+  <div class="panels" id="panels"></div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:#4a90d9"></span>class 0</span>
+    <span><span class="dot" style="background:#d9534f"></span>class 1</span>
+    <span><span class="ring"></span>label noise (flipped)</span>
+    <span>dashed green = true boundary · shading = model prediction · black = model's 0.5 boundary</span>
+  </div>
+
+  <div class="bottom">
+    <div class="chartcard">
+      <h2>Generalization gap vs dataset size</h2>
+      <canvas class="chart" id="chart" width="620" height="320"></canvas>
+    </div>
+    <div class="notecard">
+      <h2>What you're seeing</h2>
+      <p><b>N = 20:</b> the net has thousands of weights for 20 points — it threads the boundary through every
+      point, <b>including the flipped/noisy ones</b>. Train loss → 0, but the boundary is nonsense off the
+      training points, so test loss explodes. That's pure memorization.</p>
+      <p><b>N = 2000:</b> now there are far more points than the net can memorize, so the only way to lower the
+      loss is to actually recover the <b>true</b> boundary. Train and test loss meet near the
+      <b>noise floor</b> — the irreducible error from flipped labels.</p>
+      <p>The bar chart is the proof: the train↔test gap shrinks monotonically as N grows.</p>
+    </div>
+  </div>
+
+<script>
+// --------------------------------------------------------------------------- //
+// RNG                                                                          //
+// --------------------------------------------------------------------------- //
+function rng(seed){let s=seed>>>0;return function(){s|=0;s=(s+0x6D2B79F5)|0;let t=Math.imul(s^(s>>>15),1|s);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296;};}
+function gauss(rand){let u=0,v=0;while(u===0)u=rand();while(v===0)v=rand();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+const sigmoid=z=>1/(1+Math.exp(-z));
+
+// --------------------------------------------------------------------------- //
+// Learnable noisy task: true boundary is a sine wave; labels flipped w.p.noise //
+// --------------------------------------------------------------------------- //
+const VIEW=3;
+function trueLabel(x0,x1){ return x1 > 1.2*Math.sin(1.8*x0) ? 1 : 0; }
+function makeData(n, noise, seed){
+  const rand=rng(seed), X=[], y=[], flip=[];
+  for(let i=0;i<n;i++){
+    const x0=(rand()*2-1)*VIEW, x1=(rand()*2-1)*VIEW;
+    const t=trueLabel(x0,x1); const f=rand()<noise;
+    X.push([x0,x1]); y.push(f?1-t:t); flip.push(f);
+  }
+  return {X,y,flip};
+}
+
+// --------------------------------------------------------------------------- //
+// MLP (relu), minibatch SGD, BCE loss                                          //
+// --------------------------------------------------------------------------- //
+class MLP{
+  constructor(hiddenSizes,seed){
+    this.sizes=[2,...hiddenSizes,1]; const rand=rng(seed); this.W=[]; this.b=[];
+    for(let l=0;l<this.sizes.length-1;l++){
+      const fin=this.sizes[l],fout=this.sizes[l+1],std=Math.sqrt(2/fin);
+      this.W.push(Array.from({length:fin},()=>Array.from({length:fout},()=>gauss(rand)*std)));
+      this.b.push(new Array(fout).fill(0));
+    }
+    this.L=this.W.length;
+  }
+  forward(x,cache){
+    const as=[x],zs=[];let a=x;
+    for(let l=0;l<this.L;l++){
+      const fout=this.sizes[l+1],z=new Array(fout);
+      for(let j=0;j<fout;j++){let s=this.b[l][j];for(let i=0;i<a.length;i++)s+=a[i]*this.W[l][i][j];z[j]=s;}
+      zs.push(z);
+      const out=(l<this.L-1)?z.map(v=>v>0?v:0):z.map(sigmoid);
+      as.push(out);a=out;
+    }
+    return cache?{p:as[as.length-1][0],zs,as}:as[as.length-1][0];
+  }
+  stepMB(X,y,idx,lr){
+    const n=idx.length;
+    const gW=this.W.map(Wl=>Wl.map(r=>r.map(()=>0))),gb=this.b.map(bl=>bl.map(()=>0));
+    for(const s of idx){
+      const {p,zs,as}=this.forward(X[s],true);
+      let delta=[(p-y[s])/n];
+      for(let l=this.L-1;l>=0;l--){
+        const ain=as[l];
+        for(let j=0;j<delta.length;j++){gb[l][j]+=delta[j];for(let i=0;i<ain.length;i++)gW[l][i][j]+=ain[i]*delta[j];}
+        if(l>0){const prevZ=zs[l-1],nd=new Array(ain.length);
+          for(let i=0;i<ain.length;i++){let sum=0;for(let j=0;j<delta.length;j++)sum+=this.W[l][i][j]*delta[j];nd[i]=sum*(prevZ[i]>0?1:0);}
+          delta=nd;}
+      }
+    }
+    for(let l=0;l<this.L;l++){
+      for(let i=0;i<this.W[l].length;i++)for(let j=0;j<this.W[l][i].length;j++)this.W[l][i][j]-=lr*gW[l][i][j];
+      for(let j=0;j<this.b[l].length;j++)this.b[l][j]-=lr*gb[l][j];
+    }
+  }
+  loss(X,y,cap){const n=cap?Math.min(cap,X.length):X.length;let s=0;for(let i=0;i<n;i++){const p=Math.min(1-1e-7,Math.max(1e-7,this.forward(X[i],false)));s+=-(y[i]*Math.log(p)+(1-y[i])*Math.log(1-p));}return s/n;}
+  error(X,y,cap){const n=cap?Math.min(cap,X.length):X.length;let e=0;for(let i=0;i<n;i++)e+=((this.forward(X[i],false)>0.5?1:0)!==y[i]);return e/n;}
+}
+
+// --------------------------------------------------------------------------- //
+// Boundary rendering                                                          //
+// --------------------------------------------------------------------------- //
+const GRID=70;
+function toPx(v,S){return (v+VIEW)/(2*VIEW)*S;}
+function probColor(p){
+  const c0=[74,144,217],c1=[217,83,79],cw=[235,235,235];let r,g,b;
+  if(p<0.5){const t=p/0.5;r=c0[0]+(cw[0]-c0[0])*t;g=c0[1]+(cw[1]-c0[1])*t;b=c0[2]+(cw[2]-c0[2])*t;}
+  else{const t=(p-0.5)/0.5;r=cw[0]+(c1[0]-cw[0])*t;g=cw[1]+(c1[1]-cw[1])*t;b=cw[2]+(c1[2]-cw[2])*t;}
+  return [r|0,g|0,b|0];
+}
+function drawBoundary(canvas, net, data){
+  const ctx=canvas.getContext("2d"),S=canvas.width;
+  const off=document.createElement("canvas");off.width=GRID;off.height=GRID;
+  const octx=off.getContext("2d"),img=octx.createImageData(GRID,GRID),field=[];
+  for(let j=0;j<GRID;j++){field[j]=[];for(let i=0;i<GRID;i++){
+    const x0=-VIEW+(i/(GRID-1))*2*VIEW,x1=VIEW-(j/(GRID-1))*2*VIEW,p=net.forward([x0,x1],false);
+    field[j][i]=p;const [r,g,b]=probColor(p),k=(j*GRID+i)*4;
+    img.data[k]=r;img.data[k+1]=g;img.data[k+2]=b;img.data[k+3]=165;}}
+  octx.putImageData(img,0,0);ctx.clearRect(0,0,S,S);ctx.imageSmoothingEnabled=true;ctx.drawImage(off,0,0,S,S);
+  // true boundary (sine)
+  ctx.setLineDash([5,4]);ctx.strokeStyle="rgba(95,214,138,.9)";ctx.lineWidth=2;ctx.beginPath();
+  for(let px=0;px<=S;px+=2){const x0=-VIEW+px/S*2*VIEW,x1=1.2*Math.sin(1.8*x0);const py=S-toPx(x1,S);if(px===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
+  ctx.stroke();ctx.setLineDash([]);
+  // model 0.5 contour
+  ctx.strokeStyle="#0b0d11";ctx.lineWidth=2;ctx.beginPath();
+  const cell=S/(GRID-1),T=0.5,lerp=(a,b)=>(T-a)/(b-a);
+  for(let j=0;j<GRID-1;j++)for(let i=0;i<GRID-1;i++){
+    const tl=field[j][i],tr=field[j][i+1],bl=field[j+1][i],br=field[j+1][i+1],pts=[];
+    if((tl>T)!==(tr>T))pts.push([(i+lerp(tl,tr))*cell,j*cell]);
+    if((tr>T)!==(br>T))pts.push([(i+1)*cell,(j+lerp(tr,br))*cell]);
+    if((bl>T)!==(br>T))pts.push([(i+lerp(bl,br))*cell,(j+1)*cell]);
+    if((tl>T)!==(bl>T))pts.push([i*cell,(j+lerp(tl,bl))*cell]);
+    if(pts.length===2){ctx.moveTo(pts[0][0],pts[0][1]);ctx.lineTo(pts[1][0],pts[1][1]);}
+  }
+  ctx.stroke();
+  // training points (ringed if label was flipped)
+  const {X,y,flip}=data;
+  for(let i=0;i<X.length;i++){
+    const px=toPx(X[i][0],S),py=S-toPx(X[i][1],S), rad=X.length>500?1.7:3.2;
+    ctx.beginPath();ctx.arc(px,py,rad,0,2*Math.PI);
+    ctx.fillStyle=y[i]===0?"#4a90d9":"#d9534f";ctx.fill();
+    if(flip[i]&&X.length<=200){ctx.lineWidth=2;ctx.strokeStyle="#fff";ctx.stroke();}
+  }
+}
+
+// --------------------------------------------------------------------------- //
+// Gap chart (grouped bars: train vs test loss per N)                          //
+// --------------------------------------------------------------------------- //
+function drawChart(canvas, runs){
+  const ctx=canvas.getContext("2d"),W=canvas.width,H=canvas.height,padL=44,padB=42,padT=18,padR=12;
+  ctx.clearRect(0,0,W,H);
+  const maxL=Math.max(0.6,...runs.map(r=>Math.max(r.trainLoss,r.testLoss)))*1.15;
+  const y0=H-padB, plotH=y0-padT, plotW=W-padL-padR;
+  // axes
+  ctx.strokeStyle="#2a3040";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(padL,padT);ctx.lineTo(padL,y0);ctx.lineTo(W-padR,y0);ctx.stroke();
+  ctx.fillStyle="#9aa0a6";ctx.font="11px -apple-system,sans-serif";ctx.textAlign="right";ctx.textBaseline="middle";
+  for(let g=0;g<=4;g++){const v=maxL*g/4,yy=y0-plotH*g/4;ctx.fillText(v.toFixed(1),padL-6,yy);
+    ctx.strokeStyle="#191d26";ctx.beginPath();ctx.moveTo(padL,yy);ctx.lineTo(W-padR,yy);ctx.stroke();}
+  ctx.save();ctx.translate(13,padT+plotH/2);ctx.rotate(-Math.PI/2);ctx.textAlign="center";ctx.fillStyle="#9aa0a6";ctx.fillText("cross-entropy loss",0,0);ctx.restore();
+  const groupW=plotW/runs.length, barW=Math.min(46,groupW*0.28);
+  runs.forEach((r,gi)=>{
+    const cx=padL+groupW*(gi+0.5);
+    const bh=v=>Math.max(1,plotH*Math.min(v,maxL)/maxL);
+    // train bar
+    const xt=cx-barW-4, ht=bh(r.trainLoss);
+    ctx.fillStyle="#5fd68a";ctx.fillRect(xt,y0-ht,barW,ht);
+    // test bar
+    const xe=cx+4, he=bh(r.testLoss);
+    ctx.fillStyle="#e0665f";ctx.fillRect(xe,y0-he,barW,he);
+    // gap bracket
+    ctx.fillStyle="#e8eaed";ctx.textAlign="center";ctx.font="700 12px -apple-system,sans-serif";
+    ctx.fillText("gap "+(r.testLoss-r.trainLoss).toFixed(2), cx, y0-Math.max(ht,he)-9);
+    // N label
+    ctx.fillStyle="#9aa0a6";ctx.font="12px -apple-system,sans-serif";
+    ctx.fillText("N = "+r.N, cx, y0+16);
+  });
+  // legend
+  ctx.textAlign="left";ctx.font="12px -apple-system,sans-serif";
+  ctx.fillStyle="#5fd68a";ctx.fillRect(W-padR-150,padT-2,11,11);ctx.fillStyle="#9aa0a6";ctx.fillText("train loss",W-padR-134,padT+4);
+  ctx.fillStyle="#e0665f";ctx.fillRect(W-padR-66,padT-2,11,11);ctx.fillStyle="#9aa0a6";ctx.fillText("test loss",W-padR-50,padT+4);
+}
+
+// --------------------------------------------------------------------------- //
+// Drive                                                                       //
+// --------------------------------------------------------------------------- //
+const $=id=>document.getElementById(id);
+const SIZES=[20,200,2000];
+const BUDGET={20:2500,200:800,2000:120};
+const CHUNK ={20:40,200:15,2000:2};
+let anim=null, seed=1;
+
+// build panel DOM
+$("panels").innerHTML=SIZES.map((N,i)=>`
+  <div class="panel">
+    <h2>Train size <span class="n">N = ${N}</span></h2>
+    <div class="tag" id="tag${i}">&nbsp;</div>
+    <canvas class="bd" id="bd${i}" width="300" height="300"></canvas>
+    <div class="stat"><span class="k">train loss</span><span id="trL${i}">–</span></div>
+    <div class="stat"><span class="k">test loss</span><span id="teL${i}">–</span></div>
+    <div class="stat gapline"><span class="k" style="color:var(--fg)">gap</span><span id="gap${i}">–</span></div>
+    <div class="stat"><span class="k">train / test error</span><span id="err${i}">–</span></div>
+  </div>`).join("");
+
+function run(){
+  if(anim)cancelAnimationFrame(anim);
+  const units=+$("units").value, noise=(+$("noise").value)/100;
+  $("unitsVal").textContent=units; $("noiseVal").textContent=(noise*100).toFixed(0)+"%";
+  seed++;
+  const hidden=[units,units];
+  const test=makeData(2000, noise, 90000+seed);
+  const runs=SIZES.map((N,i)=>{
+    const data=makeData(N, noise, seed*10+i);
+    return { N, i, data, net:new MLP(hidden, seed*97+i), rand:rng(seed*31+i), ep:0,
+             trainLoss:0, testLoss:0, done:false };
+  });
+
+  $("run").disabled=true;
+  function frame(){
+    let allDone=true, totEp=0, totBudget=0;
+    for(const r of runs){
+      totBudget+=BUDGET[r.N];
+      if(!r.done){
+        const target=Math.min(BUDGET[r.N], r.ep+CHUNK[r.N]);
+        for(; r.ep<target; r.ep++){
+          const N=r.N, idx=[...Array(N).keys()];
+          for(let k=N-1;k>0;k--){const j=Math.floor(r.rand()*(k+1));[idx[k],idx[j]]=[idx[j],idx[k]];}
+          const bs=Math.min(32,N);
+          for(let b=0;b<N;b+=bs) r.net.stepMB(r.data.X,r.data.y,idx.slice(b,b+bs),0.1);
+        }
+        if(r.ep>=BUDGET[r.N]) r.done=true;
+        allDone=allDone&&r.done;
+      }
+      totEp+=r.ep;
+      // evaluate (test on a subsample for speed while animating)
+      r.trainLoss=r.net.loss(r.data.X,r.data.y);
+      r.testLoss =r.net.loss(test.X,test.y,600);
+      const trErr=r.net.error(r.data.X,r.data.y), teErr=r.net.error(test.X,test.y,600);
+      drawBoundary($("bd"+r.i), r.net, r.data);
+      $("trL"+r.i).textContent=r.trainLoss.toFixed(3);
+      $("teL"+r.i).textContent=r.testLoss.toFixed(3);
+      const gap=r.testLoss-r.trainLoss;
+      const gEl=$("gap"+r.i); gEl.textContent=gap.toFixed(3);
+      gEl.style.color = gap>1 ? "#e0665f" : gap>0.3 ? "#e0a13c" : "#5fd68a";
+      $("err"+r.i).textContent=(trErr*100).toFixed(0)+"% / "+(teErr*100).toFixed(0)+"%";
+      $("tag"+r.i).textContent = r.done ? (gap>1?"memorized — huge gap":gap>0.3?"partly closing":"generalizes — gap ~0") : "training…";
+    }
+    drawChart($("chart"), runs);
+    $("epoch").textContent = allDone ? "done" : "training…";
+    if(!allDone){anim=requestAnimationFrame(frame);}
+    else{
+      // final full-accuracy eval on complete test set
+      for(const r of runs){ r.testLoss=r.net.loss(test.X,test.y); }
+      drawChart($("chart"), runs);
+      for(const r of runs){ $("teL"+r.i).textContent=r.testLoss.toFixed(3);
+        const gap=r.testLoss-r.trainLoss; $("gap"+r.i).textContent=gap.toFixed(3); }
+      $("run").disabled=false;
+    }
+  }
+  frame();
+}
+
+$("run").addEventListener("click",run);
+$("units").addEventListener("input",()=>$("unitsVal").textContent=$("units").value);
+$("noise").addEventListener("input",()=>$("noiseVal").textContent=$("noise").value+"%");
+run();
+</script>
+</body>
+</html>

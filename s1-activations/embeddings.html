@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>S1-3 · Embeddings learn similarity from nothing but next-token</title>
+<style>
+  :root { --bg:#0f1116; --fg:#e8eaed; --muted:#9aa0a6;
+          --animal:#4a90d9; --fruit:#e0a13c; --verb:#a679e6; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+    font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; padding:28px 20px 60px; }
+  h1 { font-size:20px; margin:0 0 4px; font-weight:650; }
+  .lede { color:var(--muted); max-width:960px; margin:0 0 18px; }
+  .lede b.hl { color:var(--fg); }
+
+  .controls { margin:6px 0 18px; display:flex; gap:18px; align-items:center; flex-wrap:wrap; }
+  button { background:#2b6cb0; color:#fff; border:0; border-radius:8px; padding:9px 16px; font-size:14px; font-weight:600; cursor:pointer; }
+  button:disabled { opacity:.5; cursor:default; }
+  label.ctl { color:var(--muted); font-size:13px; display:flex; gap:7px; align-items:center; }
+  label.ctl .v2 { color:var(--fg); font-variant-numeric:tabular-nums; min-width:38px; }
+  input[type=range] { accent-color:#2b6cb0; }
+  #epoch { color:var(--muted); font-variant-numeric:tabular-nums; font-weight:700; }
+
+  .cols { display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start; }
+  .card { background:#171a21; border:1px solid #262b36; border-radius:12px; padding:16px; }
+  .plotcard { flex:1 1 460px; min-width:360px; }
+  .side { flex:1 1 320px; min-width:300px; display:flex; flex-direction:column; gap:16px; }
+  .card h2 { font-size:14.5px; margin:0 0 10px; font-weight:600; }
+  canvas { width:100%; height:auto; display:block; border-radius:8px; background:#0b0d11; cursor:pointer; }
+
+  .legend { display:flex; gap:16px; font-size:12.5px; color:var(--muted); margin-top:10px; flex-wrap:wrap; }
+  .dot { display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:5px; vertical-align:middle; }
+
+  .grammar { font-size:13px; color:var(--muted); }
+  .grammar .cat { font-weight:700; }
+  .grammar code { background:#20242e; padding:1px 6px; border-radius:5px; color:#cdd3da; font-size:12.5px; }
+  .samples { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px; color:#cdd3da;
+             background:#0b0d11; border:1px solid #2a3040; border-radius:8px; padding:10px; margin-top:10px; }
+  .tok { padding:0 1px; border-radius:3px; }
+
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th,td { text-align:left; padding:5px 6px; border-bottom:1px solid #23283200; }
+  th { color:var(--muted); font-weight:600; font-size:11.5px; text-transform:uppercase; letter-spacing:.03em; }
+  td.tokname { font-weight:700; }
+  .ok { color:#5fd68a; } .bad { color:#e0665f; }
+  .bar { display:inline-block; height:10px; border-radius:3px; background:#2b6cb0; vertical-align:middle; }
+  .inspect .row { display:flex; align-items:center; gap:8px; margin:3px 0; font-size:12.5px; }
+  .inspect .row .lab { width:52px; font-family:ui-monospace,Menlo,monospace; }
+  .inspect .row .pct { width:44px; text-align:right; color:var(--muted); font-variant-numeric:tabular-nums; }
+</style>
+</head>
+<body>
+  <h1>Embeddings learn similarity from nothing but next-token</h1>
+  <p class="lede">
+    A tiny model is trained on <b class="hl">one objective only</b>: given the current token, predict the next
+    token in a toy grammar. It is <b class="hl">never told</b> that <i>cat</i> and <i>dog</i> are related. Yet
+    because same-category words share the same next-token distributions, the learned embedding table
+    <b class="hl">clusters them on its own</b>. Colours below are only for us to check &mdash; the model never saw them.
+  </p>
+
+  <div class="controls">
+    <button id="run">Retrain</button>
+    <label class="ctl">embedding dim
+      <input id="dim" type="range" min="2" max="24" value="16" step="1" />
+      <span class="v2" id="dimVal">16</span>
+    </label>
+    <label class="ctl">epochs
+      <input id="epochs" type="range" min="200" max="6000" value="2500" step="100" />
+      <span class="v2" id="epochsVal">2500</span>
+    </label>
+    <span id="epoch"></span>
+  </div>
+
+  <div class="cols">
+    <div class="card plotcard">
+      <h2>Learned embedding table &mdash; projected to 2D (PCA)</h2>
+      <canvas id="cv" width="520" height="440"></canvas>
+      <div class="legend">
+        <span><span class="dot" style="background:var(--animal)"></span>animals</span>
+        <span><span class="dot" style="background:var(--fruit)"></span>fruits</span>
+        <span><span class="dot" style="background:var(--verb)"></span>verbs</span>
+        <span>· click a token to inspect it</span>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="card">
+        <h2>The toy grammar (all the model ever sees)</h2>
+        <div class="grammar">
+          <div><span class="cat" style="color:var(--animal)">animals</span> = cat, dog, cow &nbsp;·&nbsp;
+               <span class="cat" style="color:var(--fruit)">fruits</span> = apple, mango &nbsp;·&nbsp;
+               <span class="cat" style="color:var(--verb)">verbs</span> = eat, chase, see</div>
+          <div style="margin-top:8px">Sentences follow templates like<br>
+            <code>&lt;animal&gt; &lt;verb&gt; &lt;animal&gt;</code> and <code>&lt;animal&gt; &lt;verb&gt; &lt;fruit&gt;</code>,
+            chained together. So every animal is followed by the same set of verbs, every verb by the same
+            mix of animals/fruits, etc. &mdash; same category ⇒ same next-token distribution.</div>
+        </div>
+        <div class="samples" id="samples"></div>
+      </div>
+
+      <div class="card">
+        <h2>Nearest neighbour in embedding space</h2>
+        <table id="nnTable">
+          <thead><tr><th>token</th><th>closest by cosine</th><th>same category?</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h2>Inspect: <span id="inspTok" style="font-family:ui-monospace,Menlo,monospace">cat</span></h2>
+        <div style="color:var(--muted);font-size:12px;margin-bottom:6px">the actual training objective — top predicted next tokens</div>
+        <div class="inspect" id="inspect"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+// --------------------------------------------------------------------------- //
+// RNG                                                                          //
+// --------------------------------------------------------------------------- //
+function rng(seed){let s=seed>>>0;return function(){s|=0;s=(s+0x6D2B79F5)|0;let t=Math.imul(s^(s>>>15),1|s);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296;};}
+
+// --------------------------------------------------------------------------- //
+// Toy language                                                                 //
+// --------------------------------------------------------------------------- //
+const TOKENS = ["cat","dog","cow","apple","mango","eat","chase","see"];
+const CAT    = ["A","A","A","F","F","V","V","V"];
+const CATNAME= {A:"animal",F:"fruit",V:"verb"};
+const CATCOL = {A:"#4a90d9",F:"#e0a13c",V:"#a679e6"};
+const GROUPS = { A:[0,1,2], F:[3,4], V:[5,6,7] };
+const V = TOKENS.length;
+
+// category Markov chain: animal->verb, verb->{animal|fruit} 50/50, fruit->animal
+function nextCat(c, rand){ if(c==="A")return "V"; if(c==="F")return "A"; return rand()<0.5?"A":"F"; }
+function genCorpus(n, seed){
+  const rand=rng(seed); const seq=[]; let c=["A","F","V"][Math.floor(rand()*3)];
+  for(let i=0;i<n;i++){ const g=GROUPS[c]; seq.push(g[Math.floor(rand()*g.length)]); c=nextCat(c,rand); }
+  return seq;
+}
+// aggregate corpus into next-token counts: count[i][j] = times token i is followed by j
+function bigramCounts(seq){
+  const c=Array.from({length:V},()=>new Array(V).fill(0));
+  for(let i=0;i<seq.length-1;i++) c[seq[i]][seq[i+1]]++;
+  return c;
+}
+function sampleSentences(seq, count, len){
+  const out=[];
+  for(let s=0;s<count;s++){ const start=s*len % (seq.length-len); out.push(seq.slice(start,start+len)); }
+  return out;
+}
+
+const softmax=z=>{const m=Math.max(...z);const e=z.map(v=>Math.exp(v-m));const s=e.reduce((a,b)=>a+b);return e.map(v=>v/s);};
+
+// --------------------------------------------------------------------------- //
+// Model: embedding table E (V x d) -> linear W (d x V) + b -> softmax          //
+// Trained ONLY to predict the next token. Uses aggregated counts for speed.    //
+// --------------------------------------------------------------------------- //
+function makeModel(d, seed){
+  const rand=rng(seed*7+1);
+  return {
+    d,
+    E: Array.from({length:V},()=>Array.from({length:d},()=>(rand()-0.5)*0.2)),
+    W: Array.from({length:d},()=>Array.from({length:V},()=>(rand()-0.5)*0.2)),
+    b: new Array(V).fill(0),
+  };
+}
+function logitsFor(m, i){
+  const z=new Array(V);
+  for(let j=0;j<V;j++){let s=m.b[j];for(let k=0;k<m.d;k++)s+=m.E[i][k]*m.W[k][j];z[j]=s;}
+  return z;
+}
+function trainStep(m, counts, N, lr){
+  const d=m.d;
+  const gE=m.E.map(r=>r.map(()=>0)), gW=m.W.map(r=>r.map(()=>0)), gb=m.b.map(()=>0);
+  for(let i=0;i<V;i++){
+    let tot=0; for(let j=0;j<V;j++) tot+=counts[i][j];
+    if(tot===0) continue;
+    const p=softmax(logitsFor(m,i));
+    for(let j=0;j<V;j++){
+      const dz=(p[j]*tot - counts[i][j])/N;           // gradient summed over all pairs (i,·)
+      gb[j]+=dz;
+      for(let k=0;k<d;k++){ gW[k][j]+=m.E[i][k]*dz; gE[i][k]+=m.W[k][j]*dz; }
+    }
+  }
+  for(let i=0;i<V;i++)for(let k=0;k<d;k++)m.E[i][k]-=lr*gE[i][k];
+  for(let k=0;k<d;k++)for(let j=0;j<V;j++)m.W[k][j]-=lr*gW[k][j];
+  for(let j=0;j<V;j++)m.b[j]-=lr*gb[j];
+}
+
+// --------------------------------------------------------------------------- //
+// PCA to 2D (power iteration, seeded from previous frame for stable animation) //
+// --------------------------------------------------------------------------- //
+let prevV1=null, prevV2=null;
+function pca2(points){
+  const n=points.length, d=points[0].length;
+  const mean=new Array(d).fill(0);
+  for(const p of points) for(let k=0;k<d;k++) mean[k]+=p[k]/n;
+  const Xc=points.map(p=>p.map((v,k)=>v-mean[k]));
+  const C=Array.from({length:d},()=>new Array(d).fill(0));
+  for(const x of Xc) for(let a=0;a<d;a++) for(let b=0;b<d;b++) C[a][b]+=x[a]*x[b]/n;
+  const mul=(M,v)=>{const w=new Array(d).fill(0);for(let a=0;a<d;a++){let s=0;for(let b=0;b<d;b++)s+=M[a][b]*v[b];w[a]=s;}return w;};
+  const norm=v=>{const s=Math.sqrt(v.reduce((a,x)=>a+x*x,0))+1e-12;return v.map(x=>x/s);};
+  const powIter=(M,seed)=>{
+    let v = seed && seed.length===d ? seed.slice() : (()=>{const a=new Array(d).fill(0);a[0]=1;return a;})();
+    for(let it=0;it<40;it++) v=norm(mul(M,v));
+    return v;
+  };
+  let v1=powIter(C, prevV1);
+  const lam1 = v1.reduce((s,x,a)=>s + x*mul(C,v1)[a],0);
+  const C2 = C.map((row,a)=>row.map((val,b)=>val - lam1*v1[a]*v1[b]));
+  let v2=powIter(C2, prevV2);
+  // sign-stabilize against previous frame so the animation doesn't flip
+  if(prevV1){ let d1=0; for(let k=0;k<d;k++) d1+=v1[k]*prevV1[k]; if(d1<0) v1=v1.map(x=>-x); }
+  if(prevV2){ let d2=0; for(let k=0;k<d;k++) d2+=v2[k]*prevV2[k]; if(d2<0) v2=v2.map(x=>-x); }
+  prevV1=v1; prevV2=v2;
+  return Xc.map(x=>[x.reduce((s,v,k)=>s+v*v1[k],0), x.reduce((s,v,k)=>s+v*v2[k],0)]);
+}
+
+function cos(a,b){let d=0,na=0,nb=0;for(let k=0;k<a.length;k++){d+=a[k]*b[k];na+=a[k]*a[k];nb+=b[k]*b[k];}return d/(Math.sqrt(na*nb)+1e-9);}
+
+// --------------------------------------------------------------------------- //
+// Rendering                                                                   //
+// --------------------------------------------------------------------------- //
+const $=id=>document.getElementById(id);
+const cv=$("cv"), ctx=cv.getContext("2d");
+let lastProj=null, selected=0, model=null;
+
+function drawPlot(proj){
+  const S=cv.width, H=cv.height, pad=54;
+  ctx.clearRect(0,0,S,H);
+  let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+  for(const [x,y] of proj){minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);}
+  const spanX=(maxX-minX)||1, spanY=(maxY-minY)||1;
+  const sx=x=>pad+(x-minX)/spanX*(S-2*pad);
+  const sy=y=>H-pad-(y-minY)/spanY*(H-2*pad);
+  // faint axes
+  ctx.strokeStyle="#222833"; ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(pad-14,sy((minY+maxY)/2));ctx.lineTo(S-pad+14,sy((minY+maxY)/2));
+  ctx.moveTo(sx((minX+maxX)/2),pad-14);ctx.lineTo(sx((minX+maxX)/2),H-pad+14);ctx.stroke();
+  // convex-hull-ish category halos: draw translucent circle around each category centroid
+  for(const cat of ["A","F","V"]){
+    const idx=GROUPS[cat]; let cx=0,cy=0;
+    for(const i of idx){cx+=sx(proj[i][0])/idx.length;cy+=sy(proj[i][1])/idx.length;}
+    let r=0; for(const i of idx) r=Math.max(r,Math.hypot(sx(proj[i][0])-cx,sy(proj[i][1])-cy));
+    ctx.beginPath();ctx.fillStyle=CATCOL[cat]+"22";ctx.strokeStyle=CATCOL[cat]+"66";ctx.lineWidth=1.5;
+    ctx.arc(cx,cy,r+26,0,2*Math.PI);ctx.fill();ctx.stroke();
+  }
+  // points + labels
+  ctx.font="600 13px -apple-system,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+  for(let i=0;i<V;i++){
+    const x=sx(proj[i][0]),y=sy(proj[i][1]),col=CATCOL[CAT[i]];
+    ctx.beginPath();ctx.arc(x,y, i===selected?8:6,0,2*Math.PI);
+    ctx.fillStyle=col;ctx.fill();
+    if(i===selected){ctx.lineWidth=2.5;ctx.strokeStyle="#fff";ctx.stroke();}
+    ctx.fillStyle="#e8eaed";
+    ctx.fillText(TOKENS[i], x, y-15);
+  }
+}
+
+function renderSamples(seq){
+  const sents=sampleSentences(seq,4,6);
+  $("samples").innerHTML = sents.map(s =>
+    s.map(t=>`<span class="tok" style="color:${CATCOL[CAT[t]]}">${TOKENS[t]}</span>`).join(" ")
+  ).join("<br>");
+}
+
+function renderNN(m){
+  const rows=[];
+  for(let i=0;i<V;i++){
+    let best=-Infinity,bj=-1;
+    for(let j=0;j<V;j++){if(j===i)continue;const c=cos(m.E[i],m.E[j]);if(c>best){best=c;bj=j;}}
+    const same=CAT[bj]===CAT[i];
+    rows.push(`<tr>
+      <td class="tokname" style="color:${CATCOL[CAT[i]]}">${TOKENS[i]}</td>
+      <td style="color:${CATCOL[CAT[bj]]}">${TOKENS[bj]} <span style="color:var(--muted)">(${best.toFixed(2)})</span></td>
+      <td class="${same?'ok':'bad'}">${same?'✓ '+CATNAME[CAT[i]]:'✗'}</td></tr>`);
+  }
+  document.querySelector("#nnTable tbody").innerHTML=rows.join("");
+}
+
+function renderInspect(m){
+  $("inspTok").textContent=TOKENS[selected];
+  $("inspTok").style.color=CATCOL[CAT[selected]];
+  const p=softmax(logitsFor(m,selected));
+  const order=[...p.keys()].sort((a,b)=>p[b]-p[a]).slice(0,5);
+  $("inspect").innerHTML=order.map(j=>{
+    const w=Math.round(p[j]*140);
+    return `<div class="row"><span class="lab" style="color:${CATCOL[CAT[j]]}">${TOKENS[j]}</span>
+      <span class="bar" style="width:${w}px;background:${CATCOL[CAT[j]]}"></span>
+      <span class="pct">${(p[j]*100).toFixed(0)}%</span></div>`;
+  }).join("");
+}
+
+// --------------------------------------------------------------------------- //
+// Drive                                                                       //
+// --------------------------------------------------------------------------- //
+let anim=null, seed=1;
+function run(){
+  if(anim)cancelAnimationFrame(anim);
+  const d=+$("dim").value, EPOCHS=+$("epochs").value;
+  $("dimVal").textContent=d; $("epochsVal").textContent=EPOCHS;
+  seed++;
+  prevV1=prevV2=null;
+
+  const seq=genCorpus(4000, seed);
+  const counts=bigramCounts(seq);
+  const N=seq.length-1;
+  model=makeModel(d, seed);
+  renderSamples(seq);
+
+  const PER_FRAME=Math.max(10,Math.round(EPOCHS/80));
+  let e=0; $("run").disabled=true;
+  function frame(){
+    for(let k=0;k<PER_FRAME&&e<EPOCHS;k++,e++) trainStep(model,counts,N,2.0);
+    lastProj=pca2(model.E);
+    drawPlot(lastProj);
+    renderNN(model);
+    renderInspect(model);
+    $("epoch").textContent=`epoch ${e} / ${EPOCHS}`;
+    if(e<EPOCHS){anim=requestAnimationFrame(frame);}
+    else{$("run").disabled=false;$("epoch").textContent=`done · ${EPOCHS} epochs`;}
+  }
+  frame();
+}
+
+// click a token to inspect
+cv.addEventListener("click",(ev)=>{
+  if(!lastProj)return;
+  const rect=cv.getBoundingClientRect();
+  const mx=(ev.clientX-rect.left)/rect.width*cv.width;
+  const my=(ev.clientY-rect.top)/rect.height*cv.height;
+  const S=cv.width,H=cv.height,pad=54;
+  let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+  for(const [x,y] of lastProj){minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);}
+  const spanX=(maxX-minX)||1,spanY=(maxY-minY)||1;
+  let bi=0,bd=Infinity;
+  for(let i=0;i<V;i++){
+    const x=pad+(lastProj[i][0]-minX)/spanX*(S-2*pad);
+    const y=H-pad-(lastProj[i][1]-minY)/spanY*(H-2*pad);
+    const dd=Math.hypot(x-mx,y-my); if(dd<bd){bd=dd;bi=i;}
+  }
+  selected=bi; if(model){drawPlot(lastProj);renderInspect(model);}
+});
+
+$("run").addEventListener("click",run);
+$("dim").addEventListener("input",()=>$("dimVal").textContent=$("dim").value);
+$("epochs").addEventListener("input",()=>$("epochsVal").textContent=$("epochs").value);
+run();
+</script>
+</body>
+</html>
