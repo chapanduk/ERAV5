@@ -1,0 +1,17 @@
+# First mfu.py run (single rep per case), copied verbatim from the console. A later 5-rep run
+# overwrote out_mfu.txt; this run had the least background load and is the "quiet run" cited in README.md.
+== ceilings (4096^3 matmul) ==
+  fp32:  13.59 TFLOPS
+  fp16:  15.00 TFLOPS
+  bf16:  14.99 TFLOPS
+  spec-derived fp32 peak: 16.16 TFLOPS
+
+case                                                      ms/step  TFLOPS  MFU vs spec  vs fp32 matmul
+baseline loop (10.9M, B=32, fp32, .item() every step)        80.7    7.25       44.8%          53.3%
+same, no per-step .item() sync                               79.7    7.33       45.4%          54.0%
+B=8   (smaller matmuls)                                      23.2    6.31       39.1%          46.5%
+B=128 (bigger matmuls)                                      339.0    6.90       42.7%          50.8%
+wider: D=768, L=6 (42M)                                     284.1    7.79       48.2%          57.3%
+wider: D=1024, L=8 (101M)                                   322.3    8.01       49.6%          59.0%
+baseline + bf16 autocast                                     80.5    7.26       44.9%          53.4%
+baseline + fp16 autocast                                     80.7    7.25       44.8%          53.3%

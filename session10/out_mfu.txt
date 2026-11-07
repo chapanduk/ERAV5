@@ -1,0 +1,20 @@
+== ceilings (4096^3 matmul) ==
+  fp32:  12.65 TFLOPS
+  fp16:   8.31 TFLOPS
+  bf16:   6.56 TFLOPS
+  spec-derived fp32 peak: 16.16 TFLOPS
+
+rep 1/5 done
+rep 2/5 done
+rep 3/5 done
+rep 4/5 done
+rep 5/5 done
+
+case                                                        ms/step med [min-max] TFLOPS med    MFU vs spec med [range]  vs fp32 matmul
+baseline loop (10.9M, B=32, fp32, .item() every step)       96.1 [81-178]             6.08       37.6% [20%-45%]             48.1%
+same, no per-step .item() sync                              92.4 [83-148]             6.33       39.2% [25%-43%]             50.0%
+B=8   (smaller matmuls)                                     24.4 [24-39]             5.99       37.1% [23%-38%]             47.3%
+B=128 (bigger matmuls)                                     368.8 [323-1018]             6.34       39.2% [14%-45%]             50.1%
+wider: D=1024, L=8 (101M), B=16                            318.2 [270-1315]             8.12       50.2% [12%-59%]             64.2%
+baseline + bf16 autocast                                    81.4 [78-222]             7.18       44.4% [16%-47%]             56.8%
+baseline + torch.compile                                    80.9 [73-212]             7.23       44.7% [17%-50%]             57.1%

@@ -1,0 +1,37 @@
+== float64, central difference, eps = 1e-6 ==
+weight                                               backward()      finite diff   rel err
+tok.weight[byte in batch, 5]                   1.1799595594e-02 1.1799596411e-02   6.9e-08
+pos.weight[10, 3]                              -2.0082442129e-02 -2.0082441932e-02   9.8e-09
+blocks.0.qkv.weight[7, 11]  (a query weight)   1.6989757406e-04 1.6989831764e-04   4.4e-06
+blocks.1.qkv.weight[200, 50] (a key weight)    -1.0186343518e-06 -1.0191847366e-06   5.4e-04
+blocks.2.fc.weight[17, 101]                    -8.9959525998e-04 -8.9959550920e-04   2.8e-07
+blocks.3.ln2.weight[9]                         -1.6949252444e-04 -1.6949197601e-04   3.2e-06
+head.weight[ord('e'), 0]                       8.3368355338e-02 8.3368355774e-02   5.2e-09
+
+== same check in float32: relative error vs eps (blocks.2.fc.weight[17,101]) ==
+fp32 backward: -8.9959497564e-04   fp64 backward: -8.9959525998e-04
+     eps   fp32 finite diff  rel err vs fp64
+   1e-01  -8.9645385742e-04          3.5e-03
+   3e-02  -8.9009602865e-04          1.1e-02
+   1e-02  -9.0599060059e-04          7.1e-03
+   3e-03  -9.5367431641e-04          6.0e-02
+   1e-03  -9.5367431641e-04          6.0e-02
+   1e-04   0.0000000000e+00          1.0e+00
+   1e-05   0.0000000000e+00          1.0e+00
+   1e-06   0.0000000000e+00          1.0e+00
+   1e-07   0.0000000000e+00          1.0e+00
+
+== the key weight that only agreed to ~4 digits: float64 eps sweep ==
+backward: -1.0186343518e-06   loss = 5.5427, fp64 machine eps = 2.2e-16
+     eps        finite diff    abs err   roundoff floor ~ eps_mach*loss/eps
+   1e-02  -1.0186291810e-06    5.2e-12                              1.2e-13
+   1e-03  -1.0186336219e-06    7.3e-13                              1.2e-12
+   1e-04  -1.0186340660e-06    2.9e-13                              1.2e-11
+   1e-05  -1.0185630117e-06    7.1e-11                              1.2e-10
+   1e-06  -1.0191847366e-06    5.5e-10                              1.2e-09
+   1e-07  -1.0258460748e-06    7.2e-09                              1.2e-08
+
+== key bias: softmax is shift-invariant, so this gradient should be exactly zero ==
+blocks.1.qkv.bias[128] (key)   backward = -9.688e-21   finite diff = -4.441e-12
+blocks.1.qkv.bias[165] (key)   backward = 8.682e-21   finite diff = 0.000e+00
+blocks.1.qkv.bias[5]   (query) backward = -8.496e-05   (non-zero, for contrast)

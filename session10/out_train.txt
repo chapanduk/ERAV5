@@ -1,0 +1,13 @@
+base step     0 loss 5.5499 gnorm 14.073 lr 1.00e-05 dt 188.6ms
+base step   250 loss 1.7689 gnorm 0.991 lr 9.75e-04 dt 99.6ms
+base step   500 loss 1.2861 gnorm 0.881 lr 8.31e-04 dt 95.6ms
+base step   750 loss 1.0009 gnorm 0.642 lr 6.00e-04 dt 100.8ms
+base step  1000 loss 0.9605 gnorm 0.675 lr 3.55e-04 dt 104.5ms
+base step  1250 loss 0.7871 gnorm 0.562 lr 1.69e-04 dt 115.9ms
+hot step     0 loss 5.5499 gnorm 14.073 lr 4.00e-03 dt 107.5ms
+hot step   250 loss 2.6090 gnorm 0.375 lr 4.00e-03 dt 124.9ms
+hot step   500 loss 2.4676 gnorm 0.614 lr 4.00e-03 dt 170.8ms
+hot step   750 loss 2.4611 gnorm 2.792 lr 4.00e-03 dt 146.5ms
+hot step  1000 loss 2.5810 gnorm 2.988 lr 4.00e-03 dt 128.9ms
+hot step  1250 loss 2.6024 gnorm 1.907 lr 4.00e-03 dt 124.6ms
+{'flops_per_token': 71368704, 'tokens_per_step': 8192, 'median_step_s': 0.10283587500452995, 'achieved_tflops': 5.685296334010343}

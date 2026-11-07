@@ -1,0 +1,14 @@
+  [seed 0] grad check @ step 0: {'correct_vs_ref_rel': 1.1986293202426168e-06, 'wrong_vs_ref_rel': 0.14014749228954315, 'wrong_vs_ref_cos': 0.9917516708374023, 'step': 0}
+  [seed 0] grad check @ step 200: {'correct_vs_ref_rel': 4.737302390367404e-07, 'wrong_vs_ref_rel': 0.7048885822296143, 'wrong_vs_ref_cos': 0.7298738360404968, 'step': 200}
+  [seed 0] grad check @ step 400: {'correct_vs_ref_rel': 4.130646402700222e-07, 'wrong_vs_ref_rel': 0.3287379741668701, 'wrong_vs_ref_cos': 0.945509135723114, 'step': 400}
+  [seed 0] grad check @ step 600: {'correct_vs_ref_rel': 4.90249647100427e-07, 'wrong_vs_ref_rel': 0.4723978042602539, 'wrong_vs_ref_cos': 0.8837075233459473, 'step': 600}
+  [seed 0] grad check @ step 800: {'correct_vs_ref_rel': 7.768902605675976e-07, 'wrong_vs_ref_rel': 0.631083071231842, 'wrong_vs_ref_cos': 0.8164306879043579, 'step': 800}
+seed 0 correct final val 1.9339  (33s)
+seed 0 wrong   final val 1.9453  (28s)
+  [seed 1] grad check @ step 0: {'correct_vs_ref_rel': 8.132972197927302e-07, 'wrong_vs_ref_rel': 0.2887248694896698, 'wrong_vs_ref_cos': 0.9583698511123657, 'step': 0}
+  [seed 1] grad check @ step 200: {'correct_vs_ref_rel': 4.3935065718869737e-07, 'wrong_vs_ref_rel': 0.5360603928565979, 'wrong_vs_ref_cos': 0.8444135189056396, 'step': 200}
+  [seed 1] grad check @ step 400: {'correct_vs_ref_rel': 5.575410000346892e-07, 'wrong_vs_ref_rel': 0.48223868012428284, 'wrong_vs_ref_cos': 0.8971458673477173, 'step': 400}
+  [seed 1] grad check @ step 600: {'correct_vs_ref_rel': 7.561764050478814e-07, 'wrong_vs_ref_rel': 0.8069062829017639, 'wrong_vs_ref_cos': 0.6926685571670532, 'step': 600}
+  [seed 1] grad check @ step 800: {'correct_vs_ref_rel': 8.692803135090799e-07, 'wrong_vs_ref_rel': 0.3107142448425293, 'wrong_vs_ref_cos': 0.950657069683075, 'step': 800}
+seed 1 correct final val 1.7666  (29s)
+seed 1 wrong   final val 1.8305  (29s)

@@ -1,0 +1,42 @@
+config: B=32 T=256 D=384 H=6 hd=64 L=6 V=256  device=mps
+
+=== forward ===
+=== backward ===
+=== optimizer step ===
+idx                             (32, 256)          int64     B, T: B sequences of T byte ids (int64), the model input
+tok_emb(idx)                    (32, 256, 384)     float32   B, T, D: each byte id looked up as a D-dim vector
+pos_emb(arange(T))              (256, 384)         float32   T, D: one learned vector per position, broadcast over B
+x = tok + pos                   (32, 256, 384)     float32   B, T, D: the residual stream entering block 0
+  ln1(x)                        (32, 256, 384)     float32   B, T, D: x normalised per token over its D features (no shape change)
+  qkv = ln1(x) @ W_qkv          (32, 256, 1152)    float32   B, T, 3D: query, key and value for every token, packed side by side
+  q (after view+transpose)      (32, 6, 256, 64)   float32   B, H, T, hd: D split into H heads of hd dims; heads moved ahead of T so each head is its own batch
+  k                             (32, 6, 256, 64)   float32   B, H, T, hd: keys, same layout as q
+  v                             (32, 6, 256, 64)   float32   B, H, T, hd: values, same layout as q
+  scores = q @ k^T / sqrt(hd)   (32, 6, 256, 256)  float32   B, H, T_query, T_key: how much each query position attends to each key position
+  softmax(causal_mask(scores))  (32, 6, 256, 256)  float32   B, H, T_q, T_k: each row is a probability distribution over keys <= that query (causal)
+  att @ v                       (32, 6, 256, 64)   float32   B, H, T, hd: per-head weighted sum of values
+  heads merged                  (32, 256, 384)     float32   B, T, D: the H heads concatenated back into D
+  x + proj(attn)                (32, 256, 384)     float32   B, T, D: residual stream after attention
+  gelu(fc(ln2(x)))              (32, 256, 1536)    float32   B, T, 4D: MLP hidden layer, 4x wider per token
+  x + mlp                       (32, 256, 384)     float32   B, T, D: residual stream after the MLP; block output
+after 6 blocks                  (32, 256, 384)     float32   B, T, D: residual stream after the last block
+logits = ln_f(x) @ W_head       (32, 256, 256)     float32   B, T, V: unnormalised scores over the next byte, at every position
+targets y                       (32, 256)          int64     B, T: the byte that actually comes next at every position (x shifted left by one)
+logits.view(-1, V)              (8192, 256)        float32   B*T, V: every position flattened into one long list of next-byte classifications
+log_softmax(logits)             (8192, 256)        float32   B*T, V: log-probability of every possible next byte
+per-token loss                  (8192,)            float32   B*T: -log p(correct byte) for each position
+loss = mean                     ()                 float32   (): one scalar, the average over all B*T tokens; backward() starts here
+tok.weight.grad                 (256, 384)         float32   V, D: one row per byte id; rows for bytes absent from the batch get exactly zero gradient
+pos.weight.grad                 (256, 384)         float32   ctx, D: one row per position
+blocks.0.qkv.weight.grad        (1152, 384)        float32   3D, D: nn.Linear stores (out_features, in_features); grad always matches its parameter
+blocks.0.qkv.bias.grad          (1152,)            float32   3D: one bias per output feature
+blocks.0.fc.weight.grad         (1536, 384)        float32   4D, D: MLP up-projection, (out, in)
+blocks.0.out.weight.grad        (384, 1536)        float32   D, 4D: MLP down-projection, (out, in)
+blocks.0.ln1.weight.grad        (384,)             float32   D: per-feature LayerNorm gain
+head.weight.grad                (256, 384)         float32   V, D: one row of D weights per output byte
+clip_grad_norm_ result          ()                 float32   (): L2 norm of all gradients concatenated into one vector, before clipping
+adam exp_avg (fc.weight)        (1536, 384)        float32   4D, D: running mean of the gradient (first moment), same shape as the parameter
+adam exp_avg_sq (fc.weight)     (1536, 384)        float32   4D, D: running mean of grad^2 (second moment), same shape again
+adam step                       ()                 float32   (): step counter used for bias correction
+
+params: 10,942,464 total, 10,715,136 in matmuls. Optimizer state = 2 x params = 21,884,928 floats.

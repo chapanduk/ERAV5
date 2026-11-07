@@ -1,0 +1,11 @@
+float32        0 01111011 10011001100110011001101  hex 3DCCCCCD  = 1.6000000238 x 2^(123-127) = 0.10000000149   rel err 1.49e-08
+bfloat16       0 01111011 1001101                  hex 3DCD  = 1.6015625000 x 2^(123-127) = 0.10009765625   rel err 9.77e-04
+float8_e4m3fn  0 0011 101                      hex 1D  = 1.6250000000 x 2^(3-7) = 0.1015625   rel err 1.56e-02
+
+fp64 for reference: 0.1 -> 0.10000000000000000555 (0.1 is not exact even there)
+neighbours of 0.1 in E4M3: [0.09375, 0.1015625, 0.109375]
+E4M3 range: max 448.0, smallest normal 0.015625
+bf16 range: max 3.390e+38  (same exponent field as fp32: 3.403e+38)
+fp16 range: max 65504.0  (why fp16 training needs loss scaling and bf16 doesn't)
+
+bf16 swamping: 1.0 + 0.001 in bf16 = 1.0  (ulp at 1.0 is 2^-7 = 0.0078125) -> why the optimizer's weights and update stay in fp32

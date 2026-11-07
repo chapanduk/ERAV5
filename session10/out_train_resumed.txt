@@ -1,0 +1,11 @@
+base: resumed from ckpt/base.pt at step 600
+base step   750 loss 1.0010 gnorm 0.651 lr 6.00e-04 dt 93.7ms
+base step  1000 loss 0.9409 gnorm 0.620 lr 3.55e-04 dt 95.8ms
+base step  1250 loss 0.7888 gnorm 0.583 lr 1.69e-04 dt 97.7ms
+hot step     0 loss 5.5499 gnorm 14.073 lr 4.00e-03 dt 82.6ms
+hot step   250 loss 2.6140 gnorm 0.425 lr 4.00e-03 dt 113.5ms
+hot step   500 loss 2.4806 gnorm 0.483 lr 4.00e-03 dt 117.3ms
+hot step   750 loss 2.4568 gnorm 1.278 lr 4.00e-03 dt 160.9ms
+hot step  1000 loss 2.5213 gnorm 1.245 lr 4.00e-03 dt 109.2ms
+hot step  1250 loss 2.5300 gnorm 0.833 lr 4.00e-03 dt 132.6ms
+{'flops_per_token': 71368704, 'tokens_per_step': 8192, 'median_step_s': 0.09454791597090662, 'achieved_tflops': 6.18366271920688}
