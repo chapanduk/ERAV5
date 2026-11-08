@@ -1,0 +1,74 @@
+noise reference done
+
+== warmup 50 steps, then constant lr 0.002 ==
+layer                    ratio@1  @warmup end  no-warmup @same tol (2x seed gap)  warmup stops changing it at
+tok.weight              1.15e-03     1.26e-02         1.38e-02              5.0%                never (<=600)
+pos.weight              2.00e-03     1.68e-02         1.54e-02              5.0%                          351
+blocks.0.qkv.weight     2.00e-03     1.82e-02         1.41e-02              9.6%                never (<=600)
+blocks.0.proj.weight    1.99e-03     1.25e-02         6.93e-03             12.2%                never (<=600)
+blocks.0.fc.weight      2.00e-03     1.21e-02         5.55e-03              5.0%                          586
+blocks.0.out.weight     2.00e-03     1.15e-02         8.67e-03              7.9%                          593
+blocks.1.qkv.weight     2.00e-03     1.65e-02         7.18e-03              6.9%                never (<=600)
+blocks.1.proj.weight    2.00e-03     9.76e-03         4.63e-03             13.5%                          445
+blocks.1.fc.weight      2.00e-03     1.13e-02         6.13e-03              8.8%                          356
+blocks.1.out.weight     2.00e-03     1.11e-02         7.77e-03             10.8%                never (<=600)
+blocks.2.qkv.weight     1.99e-03     1.81e-02         7.23e-03             14.6%                          182
+blocks.2.proj.weight    2.00e-03     1.06e-02         5.67e-03              7.2%                never (<=600)
+blocks.2.fc.weight      2.00e-03     1.19e-02         6.86e-03             11.4%                          347
+blocks.2.out.weight     2.00e-03     1.07e-02         7.54e-03              9.7%                          538
+blocks.3.qkv.weight     1.99e-03     2.14e-02         7.91e-03              5.7%                never (<=600)
+blocks.3.proj.weight    2.00e-03     1.14e-02         6.42e-03              9.5%                          267
+blocks.3.fc.weight      2.00e-03     1.16e-02         5.76e-03              5.3%                          354
+blocks.3.out.weight     2.00e-03     9.48e-03         7.04e-03              5.6%                          402
+head.weight             2.00e-03     1.33e-02         1.09e-02              8.0%                never (<=600)
+11/19 matrices rejoin the no-warmup curve; among them median step 356 (IQR 349-491) = +306 steps after warmup ends at 50. Never rejoin: ['tok.weight', 'blocks.0.qkv.weight', 'blocks.0.proj.weight', 'blocks.1.qkv.weight', 'blocks.1.out.weight', 'blocks.2.proj.weight', 'blocks.3.qkv.weight', 'head.weight']
+
+== warmup 100 steps, then constant lr 0.002 ==
+layer                    ratio@1  @warmup end  no-warmup @same tol (2x seed gap)  warmup stops changing it at
+tok.weight              5.76e-04     1.17e-02         1.12e-02              5.0%                          192
+pos.weight              1.00e-03     2.17e-02         1.79e-02              5.0%                never (<=600)
+blocks.0.qkv.weight     9.98e-04     1.66e-02         1.37e-02              9.6%                never (<=600)
+blocks.0.proj.weight    9.97e-04     1.41e-02         8.55e-03             12.2%                never (<=600)
+blocks.0.fc.weight      1.00e-03     1.29e-02         5.42e-03              5.0%                never (<=600)
+blocks.0.out.weight     1.00e-03     1.19e-02         8.90e-03              7.9%                          351
+blocks.1.qkv.weight     9.98e-04     1.47e-02         8.06e-03              6.9%                never (<=600)
+blocks.1.proj.weight    1.00e-03     9.57e-03         5.58e-03             13.5%                          592
+blocks.1.fc.weight      1.00e-03     1.08e-02         5.30e-03              8.8%                          354
+blocks.1.out.weight     1.00e-03     1.09e-02         7.00e-03             10.8%                          450
+blocks.2.qkv.weight     9.97e-04     1.55e-02         8.69e-03             14.6%                          574
+blocks.2.proj.weight    1.00e-03     1.01e-02         9.17e-03              7.2%                never (<=600)
+blocks.2.fc.weight      1.00e-03     1.06e-02         6.77e-03             11.4%                          344
+blocks.2.out.weight     1.00e-03     1.08e-02         8.16e-03              9.7%                never (<=600)
+blocks.3.qkv.weight     9.96e-04     1.49e-02         6.57e-03              5.7%                never (<=600)
+blocks.3.proj.weight    1.00e-03     1.01e-02         8.25e-03              9.5%                never (<=600)
+blocks.3.fc.weight      1.00e-03     1.03e-02         7.92e-03              5.3%                never (<=600)
+blocks.3.out.weight     1.00e-03     1.04e-02         8.49e-03              5.6%                never (<=600)
+head.weight             9.98e-04     9.52e-03         8.76e-03              8.0%                never (<=600)
+7/19 matrices rejoin the no-warmup curve; among them median step 354 (IQR 347-512) = +254 steps after warmup ends at 100. Never rejoin: ['pos.weight', 'blocks.0.qkv.weight', 'blocks.0.proj.weight', 'blocks.0.fc.weight', 'blocks.1.qkv.weight', 'blocks.2.proj.weight', 'blocks.2.out.weight', 'blocks.3.qkv.weight', 'blocks.3.proj.weight', 'blocks.3.fc.weight', 'blocks.3.out.weight', 'head.weight']
+
+== warmup 200 steps, then constant lr 0.002 ==
+layer                    ratio@1  @warmup end  no-warmup @same tol (2x seed gap)  warmup stops changing it at
+tok.weight              2.88e-04     1.00e-02         9.63e-03              5.0%                never (<=600)
+pos.weight              5.00e-04     1.77e-02         1.61e-02              5.0%                          483
+blocks.0.qkv.weight     4.99e-04     1.49e-02         1.24e-02              9.6%                never (<=600)
+blocks.0.proj.weight    4.98e-04     1.64e-02         1.01e-02             12.2%                never (<=600)
+blocks.0.fc.weight      5.00e-04     1.34e-02         1.12e-02              5.0%                          560
+blocks.0.out.weight     5.00e-04     1.26e-02         1.19e-02              7.9%                          475
+blocks.1.qkv.weight     4.99e-04     1.47e-02         1.34e-02              6.9%                never (<=600)
+blocks.1.proj.weight    5.01e-04     1.38e-02         1.28e-02             13.5%                never (<=600)
+blocks.1.fc.weight      5.01e-04     1.28e-02         1.24e-02              8.8%                          419
+blocks.1.out.weight     5.00e-04     1.27e-02         1.17e-02             10.8%                never (<=600)
+blocks.2.qkv.weight     4.99e-04     1.53e-02         1.42e-02             14.6%                          573
+blocks.2.proj.weight    5.00e-04     1.49e-02         1.37e-02              7.2%                never (<=600)
+blocks.2.fc.weight      5.01e-04     1.27e-02         1.22e-02             11.4%                          424
+blocks.2.out.weight     5.00e-04     1.28e-02         1.18e-02              9.7%                never (<=600)
+blocks.3.qkv.weight     4.98e-04     1.51e-02         1.46e-02              5.7%                never (<=600)
+blocks.3.proj.weight    5.00e-04     1.38e-02         1.24e-02              9.5%                never (<=600)
+blocks.3.fc.weight      5.00e-04     1.30e-02         1.26e-02              5.3%                never (<=600)
+blocks.3.out.weight     5.00e-04     1.25e-02         1.25e-02              5.6%                never (<=600)
+head.weight             4.99e-04     7.74e-03         8.52e-03              8.0%                never (<=600)
+6/19 matrices rejoin the no-warmup curve; among them median step 479 (IQR 436-540) = +279 steps after warmup ends at 200. Never rejoin: ['tok.weight', 'blocks.0.qkv.weight', 'blocks.0.proj.weight', 'blocks.1.qkv.weight', 'blocks.1.proj.weight', 'blocks.1.out.weight', 'blocks.2.proj.weight', 'blocks.2.out.weight', 'blocks.3.qkv.weight', 'blocks.3.proj.weight', 'blocks.3.fc.weight', 'blocks.3.out.weight', 'head.weight']
+seed-to-seed gap, median over steps 100-600: 0.038
+warmup  50: gap vs no-warmup at warmup end 0.267, step 300 0.098, step 600 0.057 (1.5x noise) | ratio peak step: qkv [44, 45, 46, 45], fc [255, 263, 254, 255], head 17, tok 46
+warmup 100: gap vs no-warmup at warmup end 0.347, step 300 0.114, step 600 0.105 (2.8x noise) | ratio peak step: qkv [112, 154, 150, 187], fc [150, 228, 246, 246], head 25, tok 90
+warmup 200: gap vs no-warmup at warmup end 0.091, step 300 0.130, step 600 0.124 (3.3x noise) | ratio peak step: qkv [190, 227, 211, 194], fc [209, 323, 255, 253], head 36, tok 200

@@ -1,0 +1,24 @@
+LR at step 200 of a 300-step plan, as a fraction of peak: cosine 0.302, wsd 1.000 (WSD decays over steps 240-300, which a stop at 200 never reaches)
+
+== 1. tune both sides: val loss at step 200, mean of seeds [0, 1]
+  cosine: 0.0005:2.4574  0.000707:2.4281  0.001:2.4298  0.00141:2.4536  0.002:2.5042  0.004:2.6588  0.008:2.8527  0.016:2.9219   -> best 0.000707
+          best LR is inside the grid (bracketed)
+  wsd   : 0.0005:2.4297  0.000707:2.4066  0.001:2.4188  0.00141:2.4719  0.002:2.5213  0.004:2.7043  0.008:2.8821  0.016:2.9698   -> best 0.000707
+          best LR is inside the grid (bracketed)
+
+== 2. each at its own best LR, seeds [0, 1, 2, 3, 4]: val loss at step 200
+  cosine (lr 0.000707): mean 2.4306  sd 0.0054  per seed [2.4282, 2.4281, 2.4259, 2.4312, 2.4397]
+  wsd    (lr 0.000707): mean 2.4047  sd 0.0126  per seed [2.3972, 2.4161, 2.3952, 2.3945, 2.4206]
+  paired wsd - cosine: mean -0.0259, per seed [-0.0309, -0.0121, -0.0308, -0.0367, -0.0192], cosine better on 0/5 seeds
+
+== 3. untuned comparison for contrast: both at the same LR 2e-3
+  cosine: 2.5042
+  wsd   : 2.5213
+
+== extra (not the 300/200 comparison): WSD step-200 checkpoint + 40-step cooldown to 0
+  wsd+cooldown40|lr=0.000707|seed=0: val@200 2.3972 -> val@240 2.3034
+  wsd+cooldown40|lr=0.000707|seed=1: val@200 2.4161 -> val@240 2.3315
+  wsd+cooldown40|lr=0.000707|seed=2: val@200 2.3952 -> val@240 2.2892
+  wsd+cooldown40|lr=0.000707|seed=3: val@200 2.3945 -> val@240 2.3103
+  wsd+cooldown40|lr=0.000707|seed=4: val@200 2.4206 -> val@240 2.3309
+  val@200 2.4047 -> val@240 2.3130   (cosine@200 2.4306)

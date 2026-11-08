@@ -1,0 +1,9 @@
+  b2=0.95 bias_correction=True : best lr 0.0005 -> val 1.6010   all: 0.00025:1.762  0.0005:1.601  0.001:1.759  0.002:1.953  0.004:2.626
+  b2=0.95 bias_correction=False: best lr 0.0005 -> val 1.6299   all: 0.00025:1.763  0.0005:1.630  0.001:1.669  0.002:1.860  0.004:2.541
+  b2=0.999 bias_correction=True : best lr 0.0005 -> val 1.5854   all: 0.00025:1.696  0.0005:1.585  0.001:1.731  0.002:2.025  0.004:2.850
+  b2=0.999 bias_correction=False: best lr 0.000125 -> val 1.7695   all: 6.25e-05:1.933  0.000125:1.769  0.00025:1.953  0.0005:2.435  0.001:2.611  0.002:2.831  0.004:2.951
+  at each variant's own best LR, seeds 0-2 (val @ 1000):
+  b2=0.95 bias_correction=True  lr 0.0005: mean 1.6301  sd 0.0310  seeds [1.601, 1.6265, 1.6628]
+  b2=0.95 bias_correction=False lr 0.0005: mean 1.6327  sd 0.0028  seeds [1.6299, 1.6328, 1.6354]
+  b2=0.999 bias_correction=True  lr 0.0005: mean 1.5967  sd 0.0100  seeds [1.5854, 1.6041, 1.6007]
+  b2=0.999 bias_correction=False lr 0.000125: mean 1.7845  sd 0.0174  seeds [1.7695, 1.8036, 1.7804]

@@ -1,0 +1,17 @@
+width  256: 0.000125:2.606  0.00025:2.487  0.0005:2.407  0.000707:2.364  0.000841:2.366  0.001:2.336  0.00119:2.395  0.00141:2.382  0.002:2.437  0.004:2.590  0.008:2.741  0.016:2.867
+            grid best 0.001; refined minimum 9.037e-04 (val 2.3599); per-seed minima ['8.33e-04', '9.16e-04', '9.18e-04']
+width  512: 0.000125:2.449  0.00025:2.377  0.0005:2.295  0.000707:2.253  0.000841:2.257  0.001:2.239  0.00119:2.259  0.00141:2.298  0.002:2.397  0.004:2.594  0.008:2.759  0.016:2.893
+            grid best 0.001; refined minimum 8.448e-04 (val 2.2428); per-seed minima ['8.36e-04', '8.21e-04', '8.66e-04']
+width 1024: 0.000125:2.356  0.00025:2.247  0.0005:2.146  0.000707:2.106  0.000841:2.106  0.001:2.088  0.00119:2.139  0.00141:2.222  0.002:2.415  0.004:2.618  0.008:2.797  0.016:2.895
+            grid best 0.001; refined minimum 7.756e-04 (val 2.0860); per-seed minima ['7.48e-04', '8.28e-04', '7.54e-04']
+
+width  256: LRs within 1 SE of the best: 8.41e-04 - 1.00e-03; typical per-point SE 0.014; cliff: loss(2e-3) - loss(best) = +0.101, loss(4e-3) - loss(best) = +0.254
+width  512: LRs within 1 SE of the best: 7.07e-04 - 1.19e-03; typical per-point SE 0.016; cliff: loss(2e-3) - loss(best) = +0.158, loss(4e-3) - loss(best) = +0.354
+width 1024: LRs within 1 SE of the best: 7.07e-04 - 1.00e-03; typical per-point SE 0.008; cliff: loss(2e-3) - loss(best) = +0.327, loss(4e-3) - loss(best) = +0.530
+
+fit: lr* = 0.00167 * width^-0.110
+width 4096 prediction: 6.68e-04; refits with per-seed minima give 6.08e-04 - 8.35e-04 (exponent -0.15 to -0.00)
+  leave out width 256: exponent -0.12, prediction 6.54e-04
+  leave out width 512: exponent -0.11, prediction 6.66e-04
+  leave out width 1024: exponent -0.10, prediction 6.90e-04
+1/width scaling from 1024 would give 1.94e-04; 1/sqrt(width) would give 3.88e-04
