@@ -1,0 +1,104 @@
+{
+ "name": "02_screen_coupling",
+ "model": {
+  "vocab_size": 50304,
+  "seq_len": 512,
+  "n_layer": 12,
+  "n_head": 6,
+  "d_model": 384,
+  "arch": "coupling",
+  "midpoint_h": 0.5,
+  "momentum_gamma": 0.9,
+  "euler_fp_iters": 10,
+  "ce_chunk_tokens": 4096
+ },
+ "train": {
+  "name": "02_screen_coupling",
+  "batch_size": 32,
+  "total_tokens": 2000000,
+  "lr": 0.001,
+  "min_lr_frac": 0.1,
+  "warmup_frac": 0.02,
+  "weight_decay": 0.1,
+  "grad_clip": 1.0,
+  "log_every": 50,
+  "eval_every_tokens": 2000000,
+  "eval_batches": 20,
+  "eval_batch_size": 16,
+  "seed": 0,
+  "amp": true,
+  "results_dir": "results"
+ },
+ "device": "mps",
+ "device_name": "Apple MPS",
+ "torch": "2.15.0",
+ "params_total": 40766208,
+ "params_non_embedding": 21252864,
+ "tokens_per_step": 16384,
+ "steps": 122,
+ "tokens_trained": 1998848,
+ "final_train_loss": 8.38799982070923,
+ "final_val_loss": 7.121160864830017,
+ "tokens_per_sec": 14244.823463158411,
+ "train_time_s": 140.32159854099154,
+ "peak_mem_bytes": 833686528,
+ "driver_peak_mem_bytes": 12369903616,
+ "history": {
+  "step": [
+   1,
+   2,
+   3,
+   50,
+   100,
+   122
+  ],
+  "tokens": [
+   16384,
+   32768,
+   49152,
+   819200,
+   1638400,
+   1998848
+  ],
+  "loss": [
+   10.92266845703125,
+   10.43088150024414,
+   10.056741714477539,
+   7.3350934982299805,
+   7.138092517852783,
+   6.979189872741699
+  ],
+  "lr": [
+   0.0005,
+   0.001,
+   0.001,
+   0.0007002130866551969,
+   0.00017914321512009295,
+   0.00010015420376099923
+  ],
+  "gnorm": [
+   9.958749771118164,
+   5.367138862609863,
+   1.7867058515548706,
+   0.31197887659072876,
+   0.3149642050266266,
+   0.3114560842514038
+  ],
+  "tok_s": [
+   17478.654631803634,
+   12873.01708083525,
+   13202.313426338962,
+   14462.616249929768,
+   14174.652666155565,
+   13952.920934144753
+  ]
+ },
+ "evals": {
+  "tokens": [
+   1998848
+  ],
+  "val_loss": [
+   7.121160864830017
+  ]
+ }
+}

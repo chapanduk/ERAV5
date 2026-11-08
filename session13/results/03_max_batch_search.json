@@ -1,0 +1,158 @@
+{
+ "standard": {
+  "max_batch": 216,
+  "trials": [
+   {
+    "B": 32,
+    "ok": true,
+    "peak_mem_bytes": 7870387712,
+    "driver_peak_mem_bytes": 12369821696,
+    "tokens_per_sec": 14071.357698161966
+   },
+   {
+    "B": 64,
+    "ok": true,
+    "peak_mem_bytes": 15172408832,
+    "driver_peak_mem_bytes": 19886014464,
+    "tokens_per_sec": 15052.176520378454
+   },
+   {
+    "B": 128,
+    "ok": true,
+    "peak_mem_bytes": 29775468032,
+    "driver_peak_mem_bytes": 36860362752,
+    "tokens_per_sec": 15179.845180108803
+   },
+   {
+    "B": 256,
+    "ok": false,
+    "error": "MPS backend out of memory (MPS allocated: 51.41 GiB, other allocations: 96.70 MiB, max allowed: 51.84 GiB). Tried to allocate 384.00 MiB on shared pool. Use PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0 to dis"
+   },
+   {
+    "B": 192,
+    "ok": true,
+    "peak_mem_bytes": 44378396160,
+    "driver_peak_mem_bytes": 51959857152,
+    "tokens_per_sec": 7178.98053725229
+   },
+   {
+    "B": 224,
+    "ok": false,
+    "error": "MPS backend out of memory (MPS allocated: 50.87 GiB, other allocations: 228.78 MiB, max allowed: 51.84 GiB). Tried to allocate 800.00 MiB on shared pool. Use PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0 to di"
+   },
+   {
+    "B": 208,
+    "ok": true,
+    "peak_mem_bytes": 48029341184,
+    "driver_peak_mem_bytes": 54291890176,
+    "tokens_per_sec": 6923.9934363811635
+   },
+   {
+    "B": 216,
+    "ok": true,
+    "peak_mem_bytes": 50462365184,
+    "driver_peak_mem_bytes": 54902161408,
+    "tokens_per_sec": 6937.6260369662405
+   }
+  ]
+ },
+ "momentum": {
+  "max_batch": 1528,
+  "trials": [
+   {
+    "B": 32,
+    "ok": true,
+    "peak_mem_bytes": 1528474112,
+    "driver_peak_mem_bytes": 5742821376,
+    "tokens_per_sec": 20292.58109421857
+   },
+   {
+    "B": 64,
+    "ok": true,
+    "peak_mem_bytes": 2409474560,
+    "driver_peak_mem_bytes": 7261159424,
+    "tokens_per_sec": 19214.185007808293
+   },
+   {
+    "B": 128,
+    "ok": true,
+    "peak_mem_bytes": 4170754560,
+    "driver_peak_mem_bytes": 10578853888,
+    "tokens_per_sec": 14521.956066842551
+   },
+   {
+    "B": 256,
+    "ok": true,
+    "peak_mem_bytes": 7696919040,
+    "driver_peak_mem_bytes": 16752869376,
+    "tokens_per_sec": 14332.849564056245
+   },
+   {
+    "B": 512,
+    "ok": true,
+    "peak_mem_bytes": 14745446912,
+    "driver_peak_mem_bytes": 30946394112,
+    "tokens_per_sec": 13299.749224685149
+   },
+   {
+    "B": 1024,
+    "ok": true,
+    "peak_mem_bytes": 28938512896,
+    "driver_peak_mem_bytes": 52312178688,
+    "tokens_per_sec": 10088.646751981887
+   },
+   {
+    "B": 2048,
+    "ok": false,
+    "error": "MPS backend out of memory (MPS allocated: 47.02 GiB, other allocations: 1.72 GiB, max allowed: 51.84 GiB). Tried to allocate 6.00 GiB on shared pool. Use PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0 to disabl"
+   },
+   {
+    "B": 1536,
+    "ok": false,
+    "error": "MPS backend out of memory (MPS allocated: 48.16 GiB, other allocations: 1.32 GiB, max allowed: 51.84 GiB). Tried to allocate 4.50 GiB on shared pool. Use PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0 to disabl"
+   },
+   {
+    "B": 1280,
+    "ok": true,
+    "peak_mem_bytes": 35990776320,
+    "driver_peak_mem_bytes": 55067836416,
+    "tokens_per_sec": 9544.109383227385
+   },
+   {
+    "B": 1408,
+    "ok": true,
+    "peak_mem_bytes": 39432202752,
+    "driver_peak_mem_bytes": 55032184832,
+    "tokens_per_sec": 10536.513619819383
+   },
+   {
+    "B": 1472,
+    "ok": true,
+    "peak_mem_bytes": 41613371904,
+    "driver_peak_mem_bytes": 54419816448,
+    "tokens_per_sec": 9764.160476536661
+   },
+   {
+    "B": 1504,
+    "ok": true,
+    "peak_mem_bytes": 42697140736,
+    "driver_peak_mem_bytes": 55107682304,
+    "tokens_per_sec": 10195.761175286752
+   },
+   {
+    "B": 1520,
+    "ok": true,
+    "peak_mem_bytes": 42831292928,
+    "driver_peak_mem_bytes": 55254482944,
+    "tokens_per_sec": 8657.301207497065
+   },
+   {
+    "B": 1528,
+    "ok": true,
+    "peak_mem_bytes": 42899384832,
+    "driver_peak_mem_bytes": 55495655424,
+    "tokens_per_sec": 9872.224282868521
+   }
+  ]
+ }
+}

@@ -1,0 +1,77 @@
+[01_baseline_standard_B32] arch=standard params=40.77M (non-emb 21.25M) device=mps B=32 T=512 tokens/step=16384 steps=3051
+[01_baseline_standard_B32] step     1/3051 tok   0.02M loss 10.9247 gnorm 8.00   20.1k tok/s peak 7.00GiB
+[01_baseline_standard_B32] step     2/3051 tok   0.03M loss 10.7087 gnorm 6.00   23.0k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step     3/3051 tok   0.05M loss 10.5053 gnorm 4.10   23.0k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step    50/3051 tok   0.82M loss 7.2485 gnorm 0.76   21.6k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step   100/3051 tok   1.64M loss 6.8037 gnorm 0.39   20.0k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step   150/3051 tok   2.46M loss 6.5159 gnorm 0.42   15.9k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step   200/3051 tok   3.28M loss 6.4758 gnorm 0.48   12.5k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step   250/3051 tok   4.10M loss 6.3309 gnorm 0.40   15.1k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step   300/3051 tok   4.92M loss 6.2620 gnorm 0.46   16.8k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step   350/3051 tok   5.73M loss 6.1721 gnorm 0.40   17.5k tok/s peak 7.31GiB
+[01_baseline_standard_B32]   val_loss 6.2069
+[01_baseline_standard_B32] step   400/3051 tok   6.55M loss 6.0351 gnorm 0.40   17.6k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step   450/3051 tok   7.37M loss 6.0310 gnorm 0.43   17.4k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step   500/3051 tok   8.19M loss 5.8503 gnorm 0.47   17.2k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step   550/3051 tok   9.01M loss 5.8177 gnorm 0.39   17.1k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step   600/3051 tok   9.83M loss 5.7534 gnorm 0.43   17.0k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step   650/3051 tok  10.65M loss 5.6919 gnorm 0.50   17.1k tok/s peak 7.31GiB
+[01_baseline_standard_B32]   val_loss 5.7386
+[01_baseline_standard_B32] step   700/3051 tok  11.47M loss 5.6564 gnorm 0.45   17.2k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step   750/3051 tok  12.29M loss 5.6217 gnorm 0.52   17.1k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step   800/3051 tok  13.11M loss 5.5186 gnorm 0.52   17.1k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step   850/3051 tok  13.93M loss 5.4532 gnorm 0.46   17.0k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step   900/3051 tok  14.75M loss 5.3831 gnorm 0.50   17.0k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step   950/3051 tok  15.56M loss 5.4486 gnorm 0.49   17.2k tok/s peak 7.31GiB
+[01_baseline_standard_B32]   val_loss 5.4276
+[01_baseline_standard_B32] step  1000/3051 tok  16.38M loss 5.2239 gnorm 0.51   17.2k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  1050/3051 tok  17.20M loss 5.2799 gnorm 0.50   17.1k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  1100/3051 tok  18.02M loss 5.2247 gnorm 0.51   17.2k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  1150/3051 tok  18.84M loss 5.1777 gnorm 0.49   17.2k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  1200/3051 tok  19.66M loss 5.2236 gnorm 0.53   17.3k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  1250/3051 tok  20.48M loss 5.1888 gnorm 0.48   16.8k tok/s peak 7.31GiB
+[01_baseline_standard_B32]   val_loss 5.2174
+[01_baseline_standard_B32] step  1300/3051 tok  21.30M loss 5.0578 gnorm 0.52   15.9k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  1350/3051 tok  22.12M loss 5.1699 gnorm 0.51   16.1k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  1400/3051 tok  22.94M loss 4.9815 gnorm 0.48   16.4k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  1450/3051 tok  23.76M loss 5.0481 gnorm 0.53   16.7k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  1500/3051 tok  24.58M loss 5.0190 gnorm 0.53   17.1k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  1550/3051 tok  25.40M loss 5.0282 gnorm 0.58   17.1k tok/s peak 7.31GiB
+[01_baseline_standard_B32]   val_loss 5.0358
+[01_baseline_standard_B32] step  1600/3051 tok  26.21M loss 4.8807 gnorm 0.59   17.3k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  1650/3051 tok  27.03M loss 4.9901 gnorm 0.55   17.2k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  1700/3051 tok  27.85M loss 4.9303 gnorm 0.56   17.2k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  1750/3051 tok  28.67M loss 4.9501 gnorm 0.59   17.3k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  1800/3051 tok  29.49M loss 4.8762 gnorm 0.58   17.3k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  1850/3051 tok  30.31M loss 4.9966 gnorm 0.57   17.2k tok/s peak 7.31GiB
+[01_baseline_standard_B32]   val_loss 4.8991
+[01_baseline_standard_B32] step  1900/3051 tok  31.13M loss 4.7698 gnorm 0.62   17.3k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  1950/3051 tok  31.95M loss 4.9051 gnorm 0.62   17.2k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  2000/3051 tok  32.77M loss 4.7526 gnorm 0.59   17.3k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  2050/3051 tok  33.59M loss 4.7507 gnorm 0.61   17.3k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  2100/3051 tok  34.41M loss 4.7379 gnorm 0.58   17.3k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  2150/3051 tok  35.23M loss 4.6923 gnorm 0.65   17.2k tok/s peak 7.31GiB
+[01_baseline_standard_B32]   val_loss 4.7921
+[01_baseline_standard_B32] step  2200/3051 tok  36.04M loss 4.7236 gnorm 0.58   17.2k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  2250/3051 tok  36.86M loss 4.7747 gnorm 0.59   17.4k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  2300/3051 tok  37.68M loss 4.6556 gnorm 0.57   17.1k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  2350/3051 tok  38.50M loss 4.5734 gnorm 0.58   17.1k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  2400/3051 tok  39.32M loss 4.7539 gnorm 0.63   17.4k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  2450/3051 tok  40.14M loss 4.7303 gnorm 0.57   17.4k tok/s peak 7.31GiB
+[01_baseline_standard_B32]   val_loss 4.7132
+[01_baseline_standard_B32] step  2500/3051 tok  40.96M loss 4.6580 gnorm 0.59   17.2k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  2550/3051 tok  41.78M loss 4.5985 gnorm 0.57   17.0k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  2600/3051 tok  42.60M loss 4.6921 gnorm 0.61   16.9k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  2650/3051 tok  43.42M loss 4.6726 gnorm 0.62   16.9k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  2700/3051 tok  44.24M loss 4.5073 gnorm 0.55   16.9k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  2750/3051 tok  45.06M loss 4.4766 gnorm 0.63   17.1k tok/s peak 7.31GiB
+[01_baseline_standard_B32]   val_loss 4.6635
+[01_baseline_standard_B32] step  2800/3051 tok  45.88M loss 4.6873 gnorm 0.62   16.8k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  2850/3051 tok  46.69M loss 4.5718 gnorm 0.58   16.9k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  2900/3051 tok  47.51M loss 4.6756 gnorm 0.62   17.0k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  2950/3051 tok  48.33M loss 4.6862 gnorm 0.69   17.0k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  3000/3051 tok  49.15M loss 4.6386 gnorm 0.61   17.0k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  3050/3051 tok  49.97M loss 4.6174 gnorm 0.64   16.9k tok/s peak 7.31GiB
+[01_baseline_standard_B32] step  3051/3051 tok  49.99M loss 4.6663 gnorm 0.59   16.9k tok/s peak 7.31GiB
+[01_baseline_standard_B32]   val_loss 4.6310
+[01_baseline_standard_B32] DONE final_train_loss=4.6568 final_val_loss=4.6310 tok/s=17012 peak=7.31GiB time=49.0min

@@ -1,0 +1,37 @@
+{
+ "standard": {
+  "final_train_loss": 8.4295259475708,
+  "final_val_loss": 7.136548304557801,
+  "tokens_per_sec": 16835.120781284382,
+  "peak_mem_bytes": 7845506048,
+  "recon_err_trained": null
+ },
+ "coupling": {
+  "final_train_loss": 8.38799982070923,
+  "final_val_loss": 7.121160864830017,
+  "tokens_per_sec": 14244.823463158411,
+  "peak_mem_bytes": 833686528,
+  "recon_err_trained": 0.009519902989268303
+ },
+ "midpoint": {
+  "final_train_loss": 8.390783309936523,
+  "final_val_loss": 7.114225363731384,
+  "tokens_per_sec": 13721.651068659581,
+  "peak_mem_bytes": 858852352,
+  "recon_err_trained": 0.015462095849215984
+ },
+ "momentum": {
+  "final_train_loss": 8.349981307983398,
+  "final_val_loss": 7.109237480163574,
+  "tokens_per_sec": 13195.30432247283,
+  "peak_mem_bytes": 858852352,
+  "recon_err_trained": 0.00012646950199268758
+ },
+ "euler": {
+  "final_train_loss": 8.673218059539796,
+  "final_val_loss": 7.61882905960083,
+  "tokens_per_sec": 6114.657703834383,
+  "peak_mem_bytes": 758189568,
+  "recon_err_trained": 153.06240844726562
+ }
+}

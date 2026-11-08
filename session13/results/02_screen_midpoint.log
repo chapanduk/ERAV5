@@ -1,0 +1,9 @@
+[02_screen_midpoint] arch=midpoint params=40.77M (non-emb 21.25M) device=mps B=32 T=512 tokens/step=16384 steps=122
+[02_screen_midpoint] step     1/122 tok   0.02M loss 10.9249 gnorm 8.52   17.7k tok/s peak 0.49GiB
+[02_screen_midpoint] step     2/122 tok   0.03M loss 10.4668 gnorm 8.26   14.5k tok/s peak 0.80GiB
+[02_screen_midpoint] step     3/122 tok   0.05M loss 10.0851 gnorm 1.81   12.7k tok/s peak 0.80GiB
+[02_screen_midpoint] step    50/122 tok   0.82M loss 7.3067 gnorm 0.36   13.7k tok/s peak 0.80GiB
+[02_screen_midpoint] step   100/122 tok   1.64M loss 7.1196 gnorm 0.31   13.7k tok/s peak 0.80GiB
+[02_screen_midpoint] step   122/122 tok   2.00M loss 6.9757 gnorm 0.33   13.8k tok/s peak 0.80GiB
+[02_screen_midpoint]   val_loss 7.1142
+[02_screen_midpoint] DONE final_train_loss=8.3908 final_val_loss=7.1142 tok/s=13722 peak=0.80GiB time=2.4min

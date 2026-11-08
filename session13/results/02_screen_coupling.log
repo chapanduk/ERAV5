@@ -1,0 +1,9 @@
+[02_screen_coupling] arch=coupling params=40.77M (non-emb 21.25M) device=mps B=32 T=512 tokens/step=16384 steps=122
+[02_screen_coupling] step     1/122 tok   0.02M loss 10.9227 gnorm 9.96   17.5k tok/s peak 0.47GiB
+[02_screen_coupling] step     2/122 tok   0.03M loss 10.4309 gnorm 5.37   12.9k tok/s peak 0.78GiB
+[02_screen_coupling] step     3/122 tok   0.05M loss 10.0567 gnorm 1.79   13.2k tok/s peak 0.78GiB
+[02_screen_coupling] step    50/122 tok   0.82M loss 7.3351 gnorm 0.31   14.5k tok/s peak 0.78GiB
+[02_screen_coupling] step   100/122 tok   1.64M loss 7.1381 gnorm 0.31   14.2k tok/s peak 0.78GiB
+[02_screen_coupling] step   122/122 tok   2.00M loss 6.9792 gnorm 0.31   14.0k tok/s peak 0.78GiB
+[02_screen_coupling]   val_loss 7.1212
+[02_screen_coupling] DONE final_train_loss=8.3880 final_val_loss=7.1212 tok/s=14245 peak=0.78GiB time=2.3min

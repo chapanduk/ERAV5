@@ -1,0 +1,77 @@
+[02_reversible_momentum_B32] arch=momentum params=40.77M (non-emb 21.25M) device=mps B=32 T=512 tokens/step=16384 steps=3051
+[02_reversible_momentum_B32] step     1/3051 tok   0.02M loss 10.9044 gnorm 3.42   17.4k tok/s peak 0.49GiB
+[02_reversible_momentum_B32] step     2/3051 tok   0.03M loss 10.8010 gnorm 3.50   12.7k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step     3/3051 tok   0.05M loss 10.6046 gnorm 3.15   11.9k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step    50/3051 tok   0.82M loss 7.1761 gnorm 0.42   12.6k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step   100/3051 tok   1.64M loss 6.7252 gnorm 0.39   13.8k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step   150/3051 tok   2.46M loss 6.4514 gnorm 0.39   14.5k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step   200/3051 tok   3.28M loss 6.4071 gnorm 0.51   15.0k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step   250/3051 tok   4.10M loss 6.2693 gnorm 0.41   15.1k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step   300/3051 tok   4.92M loss 6.2075 gnorm 0.46   15.4k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step   350/3051 tok   5.73M loss 6.1375 gnorm 0.39   15.4k tok/s peak 0.80GiB
+[02_reversible_momentum_B32]   val_loss 6.1643
+[02_reversible_momentum_B32] step   400/3051 tok   6.55M loss 6.0116 gnorm 0.46   15.4k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step   450/3051 tok   7.37M loss 6.0225 gnorm 0.48   15.4k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step   500/3051 tok   8.19M loss 5.8304 gnorm 0.45   15.4k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step   550/3051 tok   9.01M loss 5.8316 gnorm 0.50   15.3k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step   600/3051 tok   9.83M loss 5.7557 gnorm 0.53   15.4k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step   650/3051 tok  10.65M loss 5.7010 gnorm 0.53   15.3k tok/s peak 0.80GiB
+[02_reversible_momentum_B32]   val_loss 5.7473
+[02_reversible_momentum_B32] step   700/3051 tok  11.47M loss 5.6622 gnorm 0.53   15.2k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step   750/3051 tok  12.29M loss 5.6309 gnorm 0.51   15.3k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step   800/3051 tok  13.11M loss 5.5241 gnorm 0.55   15.2k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step   850/3051 tok  13.93M loss 5.4694 gnorm 0.57   15.2k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step   900/3051 tok  14.75M loss 5.4020 gnorm 0.55   14.7k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step   950/3051 tok  15.56M loss 5.4706 gnorm 0.56   15.3k tok/s peak 0.80GiB
+[02_reversible_momentum_B32]   val_loss 5.4554
+[02_reversible_momentum_B32] step  1000/3051 tok  16.38M loss 5.2586 gnorm 0.56   15.3k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  1050/3051 tok  17.20M loss 5.2983 gnorm 0.55   15.2k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  1100/3051 tok  18.02M loss 5.2614 gnorm 0.58   15.2k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  1150/3051 tok  18.84M loss 5.1996 gnorm 0.56   15.2k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  1200/3051 tok  19.66M loss 5.2529 gnorm 0.62   15.1k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  1250/3051 tok  20.48M loss 5.2119 gnorm 0.59   14.9k tok/s peak 0.80GiB
+[02_reversible_momentum_B32]   val_loss 5.2575
+[02_reversible_momentum_B32] step  1300/3051 tok  21.30M loss 5.0882 gnorm 0.54   14.9k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  1350/3051 tok  22.12M loss 5.2076 gnorm 0.60   14.9k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  1400/3051 tok  22.94M loss 5.0203 gnorm 0.60   14.8k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  1450/3051 tok  23.76M loss 5.1041 gnorm 0.59   14.5k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  1500/3051 tok  24.58M loss 5.0642 gnorm 0.59   14.8k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  1550/3051 tok  25.40M loss 5.0762 gnorm 0.65   14.3k tok/s peak 0.80GiB
+[02_reversible_momentum_B32]   val_loss 5.0906
+[02_reversible_momentum_B32] step  1600/3051 tok  26.21M loss 4.9349 gnorm 0.70   13.6k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  1650/3051 tok  27.03M loss 5.0780 gnorm 0.61   13.1k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  1700/3051 tok  27.85M loss 4.9826 gnorm 0.60   13.0k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  1750/3051 tok  28.67M loss 5.0194 gnorm 0.69   13.0k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  1800/3051 tok  29.49M loss 4.9561 gnorm 0.65   12.8k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  1850/3051 tok  30.31M loss 5.0818 gnorm 0.65   12.2k tok/s peak 0.80GiB
+[02_reversible_momentum_B32]   val_loss 4.9810
+[02_reversible_momentum_B32] step  1900/3051 tok  31.13M loss 4.8461 gnorm 0.64   12.3k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  1950/3051 tok  31.95M loss 5.0012 gnorm 0.67   11.9k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  2000/3051 tok  32.77M loss 4.8195 gnorm 0.64   11.9k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  2050/3051 tok  33.59M loss 4.8325 gnorm 0.66   11.9k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  2100/3051 tok  34.41M loss 4.8248 gnorm 0.64   11.9k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  2150/3051 tok  35.23M loss 4.7977 gnorm 0.80    9.7k tok/s peak 0.80GiB
+[02_reversible_momentum_B32]   val_loss 4.8797
+[02_reversible_momentum_B32] step  2200/3051 tok  36.04M loss 4.8019 gnorm 0.64    6.9k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  2250/3051 tok  36.86M loss 4.8677 gnorm 0.65   15.5k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  2300/3051 tok  37.68M loss 4.7482 gnorm 0.71   16.6k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  2350/3051 tok  38.50M loss 4.6457 gnorm 0.69   13.3k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  2400/3051 tok  39.32M loss 4.8084 gnorm 0.69   11.0k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  2450/3051 tok  40.14M loss 4.8066 gnorm 0.69   12.8k tok/s peak 0.80GiB
+[02_reversible_momentum_B32]   val_loss 4.7980
+[02_reversible_momentum_B32] step  2500/3051 tok  40.96M loss 4.7383 gnorm 0.67   14.0k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  2550/3051 tok  41.78M loss 4.6727 gnorm 0.72   14.4k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  2600/3051 tok  42.60M loss 4.7759 gnorm 0.77   14.4k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  2650/3051 tok  43.42M loss 4.7539 gnorm 0.77   14.4k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  2700/3051 tok  44.24M loss 4.5846 gnorm 0.64   14.4k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  2750/3051 tok  45.06M loss 4.5610 gnorm 0.78   14.4k tok/s peak 0.80GiB
+[02_reversible_momentum_B32]   val_loss 4.7476
+[02_reversible_momentum_B32] step  2800/3051 tok  45.88M loss 4.7602 gnorm 0.79   14.5k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  2850/3051 tok  46.69M loss 4.6386 gnorm 0.66   14.6k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  2900/3051 tok  47.51M loss 4.7651 gnorm 0.78   14.5k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  2950/3051 tok  48.33M loss 4.7746 gnorm 0.80   14.5k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  3000/3051 tok  49.15M loss 4.7015 gnorm 0.74   14.6k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  3050/3051 tok  49.97M loss 4.6985 gnorm 0.78   14.6k tok/s peak 0.80GiB
+[02_reversible_momentum_B32] step  3051/3051 tok  49.99M loss 4.7387 gnorm 0.71   14.7k tok/s peak 0.80GiB
+[02_reversible_momentum_B32]   val_loss 4.7126
+[02_reversible_momentum_B32] DONE final_train_loss=4.7357 final_val_loss=4.7126 tok/s=13857 peak=0.80GiB time=60.1min

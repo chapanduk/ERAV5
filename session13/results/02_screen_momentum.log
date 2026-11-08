@@ -1,0 +1,9 @@
+[02_screen_momentum] arch=momentum params=40.77M (non-emb 21.25M) device=mps B=32 T=512 tokens/step=16384 steps=122
+[02_screen_momentum] step     1/122 tok   0.02M loss 10.9044 gnorm 3.42   17.8k tok/s peak 0.49GiB
+[02_screen_momentum] step     2/122 tok   0.03M loss 10.3329 gnorm 2.07   12.3k tok/s peak 0.80GiB
+[02_screen_momentum] step     3/122 tok   0.05M loss 10.0130 gnorm 1.77   12.4k tok/s peak 0.80GiB
+[02_screen_momentum] step    50/122 tok   0.82M loss 7.3145 gnorm 0.39   13.4k tok/s peak 0.80GiB
+[02_screen_momentum] step   100/122 tok   1.64M loss 7.1228 gnorm 0.32   13.0k tok/s peak 0.80GiB
+[02_screen_momentum] step   122/122 tok   2.00M loss 6.9668 gnorm 0.33   13.2k tok/s peak 0.80GiB
+[02_screen_momentum]   val_loss 7.1092
+[02_screen_momentum] DONE final_train_loss=8.3500 final_val_loss=7.1092 tok/s=13195 peak=0.80GiB time=2.5min

@@ -1,0 +1,6 @@
+[03_reversible_momentum_maxB1464] arch=momentum params=40.77M (non-emb 21.25M) device=mps B=1464 T=512 tokens/step=749568 steps=66
+[03_reversible_momentum_maxB1464] step     1/66 tok   0.75M loss 10.9135 gnorm 3.38   10.0k tok/s peak 38.38GiB
+[03_reversible_momentum_maxB1464] step     2/66 tok   1.50M loss 10.3141 gnorm 2.00    9.8k tok/s peak 38.69GiB
+[03_reversible_momentum_maxB1464] step     3/66 tok   2.25M loss 9.6083 gnorm 1.70   10.5k tok/s peak 38.69GiB
+[03_reversible_momentum_maxB1464] step     4/66 tok   3.00M loss 8.7878 gnorm 1.64    9.6k tok/s peak 38.69GiB
+[03_reversible_momentum_maxB1464] step     5/66 tok   3.75M loss 8.2622 gnorm 1.46   10.1k tok/s peak 38.69GiB

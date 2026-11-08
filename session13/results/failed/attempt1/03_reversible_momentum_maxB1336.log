@@ -1,0 +1,1 @@
+[03_reversible_momentum_maxB1336] arch=momentum params=40.77M (non-emb 21.25M) device=mps B=1336 T=512 tokens/step=684032 steps=73
