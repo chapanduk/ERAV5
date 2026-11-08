@@ -1,0 +1,84 @@
+device=mps vocab=98 train_tokens=18,461,330 val_tokens=971,649
+dense params: 10.78M
+[dense] step     0  train nan  val 4.6369     1.3s
+[dense] step   100  train 2.6024  val 2.2264    29.1s
+[dense] step   200  train 1.9430  val 1.6642    55.1s
+[dense] step   300  train 1.4384  val 1.3116    81.4s
+[dense] step   400  train 1.1889  val 1.1379   108.8s
+[dense] step   500  train 1.0599  val 1.0480   136.6s
+[dense] step   600  train 0.9869  val 0.9861   165.5s
+[dense] step   700  train 0.9353  val 0.9442   194.5s
+[dense] step   800  train 0.8920  val 0.9081   224.0s
+[dense] step   900  train 0.8582  val 0.8761   253.0s
+[dense] step  1000  train 0.8267  val 0.8484   282.7s
+[dense] step  1100  train 0.8034  val 0.8285   311.1s
+[dense] step  1200  train 0.7825  val 0.8079   340.0s
+[dense] step  1300  train 0.7667  val 0.7930   367.9s
+[dense] step  1400  train 0.7474  val 0.7777   395.9s
+[dense] step  1500  train 0.7327  val 0.7657   423.4s
+[dense] step  1600  train 0.7188  val 0.7550   451.3s
+[dense] step  1700  train 0.7085  val 0.7439   478.8s
+[dense] step  1800  train 0.6971  val 0.7355   506.5s
+[dense] step  1900  train 0.6919  val 0.7266   533.8s
+[dense] step  2000  train 0.6818  val 0.7191   561.1s
+[dense] step  2100  train 0.6684  val 0.7132   589.2s
+[dense] step  2200  train 0.6618  val 0.7070   617.0s
+[dense] step  2300  train 0.6557  val 0.7041   644.3s
+[dense] step  2400  train 0.6567  val 0.7006   671.3s
+[dense] step  2500  train 0.6516  val 0.6984   698.8s
+
+UPCYCLE  dense val 0.698423  ->  MoE val 0.698423  (diff 2.98e-09)
+MoE params total 60.43M, active/token 17.89M
+
+[moe  ] step  2500  train nan  val 0.6984     3.2s L0 load=[0.04 0.07 0.18 0.27 0.13 0.06 0.08 0.16]
+[moe  ] step  2600  train 0.6684  val 0.7542    51.9s L0 load=[0.12 0.15 0.13 0.14 0.10 0.13 0.13 0.10]
+[moe  ] step  2700  train 0.7170  val 0.7617   100.1s L0 load=[0.10 0.10 0.12 0.16 0.14 0.13 0.10 0.16]
+[moe  ] step  2800  train 0.7167  val 0.7569   148.6s L0 load=[0.12 0.15 0.10 0.15 0.12 0.07 0.14 0.13]
+[moe  ] step  2900  train 0.7091  val 0.7514   197.3s L0 load=[0.17 0.10 0.10 0.17 0.12 0.10 0.14 0.10]
+[moe  ] step  3000  train 0.7017  val 0.7446   247.4s L0 load=[0.07 0.13 0.09 0.15 0.13 0.12 0.17 0.13]
+[moe  ] step  3100  train 0.6916  val 0.7367   295.1s L0 load=[0.14 0.09 0.10 0.16 0.14 0.09 0.16 0.12]
+[moe  ] step  3200  train 0.6830  val 0.7293   342.8s L0 load=[0.15 0.15 0.06 0.15 0.12 0.09 0.15 0.11]
+[moe  ] step  3300  train 0.6718  val 0.7212   390.1s L0 load=[0.14 0.10 0.14 0.14 0.13 0.08 0.15 0.12]
+[moe  ] step  3400  train 0.6621  val 0.7127   437.7s L0 load=[0.12 0.07 0.13 0.15 0.15 0.14 0.13 0.11]
+[moe  ] step  3500  train 0.6493  val 0.7040   485.7s L0 load=[0.14 0.10 0.13 0.14 0.11 0.11 0.13 0.14]
+[moe  ] step  3600  train 0.6413  val 0.6979   533.3s L0 load=[0.13 0.14 0.12 0.13 0.15 0.09 0.13 0.12]
+[moe  ] step  3700  train 0.6317  val 0.6898   580.8s L0 load=[0.12 0.12 0.08 0.13 0.14 0.13 0.13 0.14]
+[moe  ] step  3800  train 0.6244  val 0.6819   628.0s L0 load=[0.13 0.12 0.13 0.13 0.12 0.10 0.14 0.13]
+[moe  ] step  3900  train 0.6108  val 0.6770   675.4s L0 load=[0.12 0.11 0.12 0.12 0.12 0.12 0.14 0.15]
+[moe  ] step  4000  train 0.6022  val 0.6714   722.7s L0 load=[0.12 0.12 0.12 0.12 0.13 0.10 0.14 0.14]
+[moe  ] step  4100  train 0.5951  val 0.6667   770.3s L0 load=[0.13 0.11 0.11 0.12 0.12 0.12 0.14 0.15]
+[moe  ] step  4200  train 0.5898  val 0.6613   817.5s L0 load=[0.13 0.11 0.12 0.12 0.12 0.11 0.13 0.15]
+[moe  ] step  4300  train 0.5847  val 0.6599   864.7s L0 load=[0.14 0.11 0.12 0.12 0.12 0.12 0.13 0.14]
+[moe  ] step  4400  train 0.5852  val 0.6575   912.2s L0 load=[0.13 0.13 0.12 0.12 0.12 0.11 0.13 0.14]
+[moe  ] step  4500  train 0.5805  val 0.6555   959.7s L0 load=[0.13 0.12 0.11 0.12 0.12 0.11 0.14 0.14]
+[dense] step  2500  train nan  val 0.6984     1.2s
+[dense] step  2600  train 0.6637  val 0.7417    27.6s
+[dense] step  2700  train 0.7025  val 0.7450    54.2s
+[dense] step  2800  train 0.7024  val 0.7425    80.7s
+[dense] step  2900  train 0.6958  val 0.7404   107.9s
+[dense] step  3000  train 0.6911  val 0.7338   134.5s
+[dense] step  3100  train 0.6827  val 0.7282   161.2s
+[dense] step  3200  train 0.6765  val 0.7226   187.5s
+[dense] step  3300  train 0.6665  val 0.7180   213.8s
+[dense] step  3400  train 0.6589  val 0.7092   240.3s
+[dense] step  3500  train 0.6489  val 0.7028   266.5s
+[dense] step  3600  train 0.6427  val 0.6986   292.9s
+[dense] step  3700  train 0.6339  val 0.6928   318.9s
+[dense] step  3800  train 0.6292  val 0.6861   345.3s
+[dense] step  3900  train 0.6172  val 0.6811   371.3s
+[dense] step  4000  train 0.6103  val 0.6765   397.4s
+[dense] step  4100  train 0.6048  val 0.6723   424.2s
+[dense] step  4200  train 0.6005  val 0.6682   450.3s
+[dense] step  4300  train 0.5973  val 0.6671   476.8s
+[dense] step  4400  train 0.5986  val 0.6643   502.9s
+[dense] step  4500  train 0.5955  val 0.6635   529.4s
+
+--- dense sample ---
+Once upon a time, there was a little girl named Lily. One day, Lily's mommy asked her if she wanted to play with her ball. Lily didn't want to be friends with her ball anymore. Her mommy said they had to put a band-aid on it.
+Lily put the ball on her back and put it in her pocket. Then she put it on her hands and w
+
+--- moe sample ---
+Once upon a time, there was a boy named Timmy. Timmy loved to play with his toys. One day, Timmy's mom took him to the park to play with him. Timmy was having so much fun running around and playing.
+After playing at the park, Timmy saw a big house. He wanted to play with it too. He began to play with it, but he did
+
+wrote results.json
